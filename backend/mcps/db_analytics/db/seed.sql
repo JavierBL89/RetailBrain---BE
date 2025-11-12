@@ -2,6 +2,12 @@
 -- How to run this seed file:
   docker exec -i retailbrain---be-db-1 \
   psql -U hackathon_user -d mydatabase < db/seed.sql
+
+  or ALL at once
+
+  docker compose up -d
+  docker exec -i retailbrain---be-db-1 psql -U hackathon_user -d mydatabase < backend/mcps/db_analytics/db/seed.sql
+
 -- =========================================    
 
 -- ========== SIZES ==========
