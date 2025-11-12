@@ -11,3 +11,31 @@ services:
     ports:
       - "5432:5432"
 # DATABASE_URL=postgres://myuser:mypassword@db:5432/mydatabase
+
+  orchestrator:
+    build: ./backend/mcps/orchestrator_mcp
+    container_name: orchestrator
+    environment:
+      - MCP_SERVICE_TOKEN=supersecret
+    ports:
+      - "8000:8000"
+    depends_on:
+      - product-vector-search
+  #    - analysis
+
+  product-vector-search:
+    build: ./backend/mcps/product_v_search_mcp
+    container_name: product-vector-search
+    environment:
+      - MCP_SERVICE_TOKEN=supersecret
+      - HF_SPACE_URL=https://huggingface.co/spaces/javierBLdev89/embedding-model_all-MiniLM-L6-v2
+    ports:
+      - "8001:8000"
+
+  #analysis:
+  #  build: ./backend/mcps/analysis_mcp
+  #  container_name: analysis
+  #  environment:
+  #    - MCP_SERVICE_TOKEN=supersecret
+  #  ports:
+  #   - "8002:8000"
