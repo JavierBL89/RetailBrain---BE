@@ -1,0 +1,4 @@
+fastmcp
+chromadb
+requests>=2.31.0
+uvicorn

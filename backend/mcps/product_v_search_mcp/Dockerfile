@@ -11,4 +11,4 @@ COPY . .
 # Expose FastMCP HTTP port
 EXPOSE 8001
 
-CMD ["python", "main.py"]
+CMD ["python", "mcp_server.py"]

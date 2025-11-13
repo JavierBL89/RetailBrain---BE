@@ -1,34 +1,35 @@
 services:
-  backend:
-    build: ./backend
-    env_file: .env
-    depends_on:
-      - db
-
   db:
     image: postgres
     env_file: .env
     ports:
       - "5432:5432"
-# DATABASE_URL=postgres://myuser:mypassword@db:5432/mydatabase
 
   orchestrator:
     build: ./backend/mcps/orchestrator_mcp
     container_name: orchestrator
+    env_file:
+    - .env
     environment:
-      - MCP_SERVICE_TOKEN=supersecret
+        - MCP_SERVICE_TOKEN=${MCP_SERVICE_TOKEN}
+        - PRODUCT_VECTOR_SEARCH_URL=http://product-vector-search:8001
+        - DATABASE_URL=${DATABASE_URL}
+        - ANALYTICS_URL=http://analysis:8002
     ports:
       - "8000:8000"
     depends_on:
       - product-vector-search
+      - db
   #    - analysis
 
   product-vector-search:
     build: ./backend/mcps/product_v_search_mcp
     container_name: product-vector-search
+    env_file:
+    - .env
     environment:
-      - MCP_SERVICE_TOKEN=supersecret
-      - HF_SPACE_URL=https://huggingface.co/spaces/javierBLdev89/embedding-model_all-MiniLM-L6-v2
+      - MCP_SERVICE_TOKEN=${MCP_SERVICE_TOKEN}
+      - HF_SPACE_EMB_URL=${HF_SPACE_EMB_URL}
     ports:
       - "8001:8000"
 
