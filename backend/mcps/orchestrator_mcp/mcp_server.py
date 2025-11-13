@@ -53,5 +53,5 @@ if __name__ == "__main__":
     # Default port: 8000, endpoint: /mcp
     print("FastMCP Orchestrator started on port 8000")
     # Get the FastAPI app from FastMCP
-    # mcp.run(transport="http", host="0.0.0.0", port=8000)
-    mcp.run(transport="http", host="127.0.0.1", port=8000)
+    mcp.run(transport="http", host="0.0.0.0", port=8000)
+    #mcp.run(transport="http", host="127.0.0.1", port=8000)
