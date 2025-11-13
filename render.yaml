@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: orchestrator
+    runtime: docker
+    plan: starter
+    dockerfilePath: backend/mcps/orchestrator_mcp/Dockerfile
+    rootDir: backend/mcps/orchestrator_mcp
+    envVars:
+      - key: MCP_SERVICE_TOKEN
+        sync: false  # lo defines manualmente o en el dashboard
+      - key: HF_SPACE_URL
+        sync: false
+    # Render detectará orchestrator_mcp/Dockerfile
+
+
+  - type: web
+    name: product-vector-search
+    runtime: docker
+    plan: starter
+    dockerfilePath: backend/mcps/product-v-search_mcp/Dockerfile
+    rootDir: backend/mcps/product_vector_search_mcp
+    envVars:
+      - key: MCP_SERVICE_TOKEN
+        sync: false
+      - key: HF_SPACE_URL
+        sync: false
+
+  - type: web
+    name: analysis
+    runtime: docker
+    plan: starter
+    dockerfilePath: backend/mcps/db_analytics/Dockerfile
+    rootDir: backend/mcps/analysis_mcp
+    envVars:
+      - key: MCP_SERVICE_TOKEN
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: retailbrain-db     # references the managed Render DB
+          property: connectionString

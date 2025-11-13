@@ -1,11 +1,10 @@
 
-## Run from terminal
+# Run from terminal
 Enter the Postgres shell:
 
  - docker exec -it retailbrain---be-db-1 psql -U hackathon_user -d mydatabase
 
-
-### To fetch a full product with variants:
+### Fetch a full product with variants:
 
 SELECT 
     p.product_id,
