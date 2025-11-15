@@ -1,7 +1,11 @@
 from fastmcp import FastMCP
-import os
+import sys, os
+
 import logging
 import json
+from llama_client import query_llama_api
+from backend.infra.redis_client import rdb, save_session, load_session, delete_session
+
 
 
 logging.basicConfig(level=logging.INFO)
@@ -12,25 +16,16 @@ SERVICE_TOKEN = os.getenv("MCP_SERVICE_TOKEN", "change-me")
 mcp = FastMCP("orchestrator")
 
 
+# ------------------------------------------------------
+# HEALTH TOOLS / ENDPOINTS
+# ------------------------------------------------------
 @mcp.tool
 def insert_product(product: dict) -> str:
     """
     Insert a new product into the inventory system.
     Currently logs the request for testing purposes.
-    Args:
-        product: Dictionary containing product details with keys:
-                 - sku: Product SKU code
-                 - name: Product name
-                 - description: Product description
-                 - category: Product category
-                 - material: Material composition
-                 - gender: Target gender
-                 - brand: Brand name
-                 - tags: Comma-separated tags string
-    
-    Returns:
-        JSON string with confirmation message
     """
+
     # Log the request
     logging.info("=" * 20)
     logging.info("📦 INSERT PRODUCT REQUEST")
@@ -43,6 +38,23 @@ def insert_product(product: dict) -> str:
         "message": f"Product '{product.get('name')}' logged successfully",
         "product": product
     }, indent=2)
+
+
+@mcp.tool
+def semantic_products_search(user_query: dict):
+    """
+    Perform a semantic search for products based on user query.
+    """
+    # Load last message from session to recover session state
+    last = load_session("last_message")
+
+    # Call LLaMA API to extract intent/entities
+    query_llama_api(user_query['query'])
+    
+    # Save last message to session for state persistence
+    save_session("last_message", {"message": user_query.get("query", "")})
+    return {"result": "hello"}
+
 
 # AUTH
 @mcp.tool
@@ -64,7 +76,7 @@ def require_auth(request, next):
     return next(request)
 
 # ------------------------------------------------------
-# TOOLS / ENDPOINTS
+# HEALTH TOOLS / ENDPOINTS
 # ------------------------------------------------------
 @mcp.tool
 def health() -> str:

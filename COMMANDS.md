@@ -7,6 +7,12 @@
 
 - docker ps  (checks if contaner is running)
 
+##### Remove any __pychache__ (when needed)
+
+  docker compose down --volumes --remove-orphans
+  docker compose build --no-cache
+  docker compose up
+
 
 # BUILD DATABASE
 

@@ -5,22 +5,37 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--save", "60", "1", "--loglevel", "warning"]
+
+
   orchestrator:
     build: ./backend/mcps/orchestrator_mcp
     container_name: orchestrator
     env_file:
-    - .env
+      - .env
     environment:
-        - MCP_SERVICE_TOKEN=${MCP_SERVICE_TOKEN}
-        - PRODUCT_VECTOR_SEARCH_URL=http://product-vector-search:8001
-        - DATABASE_URL=${DATABASE_URL}
-        - ANALYTICS_URL=http://analysis:8002
+      - MCP_SERVICE_TOKEN=${MCP_SERVICE_TOKEN}
+      - PRODUCT_VECTOR_SEARCH_URL=http://product-vector-search:8001
+      - DATABASE_URL=${DATABASE_URL}
+      - ANALYTICS_URL=http://analysis:8002
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount your host code directly into the container
+      - ./backend:/app/backend         # ✅ mount the whole backend
+    command: ["python", "-m", "backend.mcps.orchestrator_mcp.mcp_server"]
     ports:
       - "8000:8000"
     depends_on:
       - product-vector-search
       - db
-  #    - analysis
+    #    - analysis
 
   product-vector-search:
     build: ./backend/mcps/product_v_search_mcp
@@ -30,6 +45,11 @@ services:
     environment:
       - MCP_SERVICE_TOKEN=${MCP_SERVICE_TOKEN}
       - HF_SPACE_EMB_URL=${HF_SPACE_EMB_URL}
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount your host code directly into the container
+      - ./backend/mcps/product_v_search_mcp:/app
+    command: ["python", "mcp_server.py"]
     ports:
       - "8001:8000"
 
@@ -38,6 +58,11 @@ services:
   #  container_name: analysis
   #  environment:
   #    - MCP_SERVICE_TOKEN=supersecret
+  #   - PYTHONUNBUFFERED=1
+  #  volumes:
+        # Mount your host code directly into the container
+  #    - ./backend/mcps/analysis_mcp:/app
+  #   command: [python, mcp_server.py]
   #  ports:
   #   - "8002:8000"
 
@@ -57,3 +82,6 @@ services:
       - ./n8n_data:/home/node/.n8n
     depends_on:
       - orchestrator
+
+volumes:        # 👈 must be at root level, same indent as `services:`
+  redis_data:   # 👈 defines the named volume used above

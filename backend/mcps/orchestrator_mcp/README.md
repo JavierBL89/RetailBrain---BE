@@ -1,3 +1,5 @@
+pip install watchdog
+watchmedo auto-restart --directory=. --pattern="*.py" --recursive python mcp_server.py
 
 
 
@@ -10,7 +12,7 @@
 
  We must send a JSON-RPC 2.0 request with the proper method and fields
 
-### Step 1 — create a new session and capture its ID
+### Step 1 — Establish the SSE connnectin by creating a new session and capture its ID
 SESSION=$(curl -sD - \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
@@ -24,7 +26,7 @@ echo "Session ID: $SESSION"
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: $SESSION_ID" \
+  -H "mcp-session-id: 7528a13672404021bba2e52b7b600eef" \
   -H "X-Service-Token: MCP_SERVICE_TOKEN" \
   -d '{"jsonrpc":"2.0","method":"notifications/initialized","params":{}}'
 
@@ -37,7 +39,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: $SESSION_ID" \
+  -H "mcp-session-id: 7528a13672404021bba2e52b7b600eef" \
   -H "X-Service-Token: MCP_SERVICE_TOKEN" \
   -d '{
     "jsonrpc": "2.0",
@@ -51,8 +53,8 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: SESSION_ID" \
-  -H "X-Service-Token: MCP_SERVICE_TOKEN" \
+  -H "mcp-session-id: 7528a13672404021bba2e52b7b600eef" \
+  -H "X-Service-Token: kalandrakatech1234" \
   -d '{
   "jsonrpc": "2.0",
   "id": "2",
@@ -79,3 +81,24 @@ curl -X POST http://localhost:8000/mcp \
     "arguments":  {message": "hola"}
   }
 }'
+
+
+## Call semantic_products_search
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: 7528a13672404021bba2e52b7b600eef" \
+    -H "X-Service-Token: kalandrakatech1234" \
+  -d '{                      
+    "jsonrpc": "2.0",                                      
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+        "name": "semantic_products_search",
+        "arguments": {
+            "user_query": {
+            "query": "I need stylish summer sandals, maybe around $75"
+        }
+      }
+    }
+  }'
