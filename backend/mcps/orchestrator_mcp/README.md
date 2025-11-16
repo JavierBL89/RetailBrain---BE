@@ -26,7 +26,7 @@ echo "Session ID: $SESSION"
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 7528a13672404021bba2e52b7b600eef" \
+  -H "mcp-session-id: 195ab641c6794b24bbf643a08b4233fa" \
   -H "X-Service-Token: MCP_SERVICE_TOKEN" \
   -d '{"jsonrpc":"2.0","method":"notifications/initialized","params":{}}'
 
@@ -39,7 +39,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 7528a13672404021bba2e52b7b600eef" \
+  -H "mcp-session-id: 195ab641c6794b24bbf643a08b4233fa" \
   -H "X-Service-Token: MCP_SERVICE_TOKEN" \
   -d '{
     "jsonrpc": "2.0",
@@ -53,7 +53,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 7528a13672404021bba2e52b7b600eef" \
+  -H "mcp-session-id: 195ab641c6794b24bbf643a08b4233fa" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
   "jsonrpc": "2.0",
@@ -87,18 +87,21 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 7528a13672404021bba2e52b7b600eef" \
+  -H "mcp-session-id: 195ab641c6794b24bbf643a08b4233fa" \
     -H "X-Service-Token: kalandrakatech1234" \
   -d '{                      
     "jsonrpc": "2.0",                                      
     "id": "1",
     "method": "tools/call",
     "params": {
-        "name": "semantic_products_search",
-        "arguments": {
-            "user_query": {
-            "query": "I need stylish summer sandals, maybe around $75"
+        "name": "route_request",
+        "arguments" :{
+            "context": {
+                "action": "semantic_products_search",
+                "user_query": {
+                 "query": "I need stylish summer sandals, maybe around $75"
+            }
         }
-      }
+        }
     }
   }'

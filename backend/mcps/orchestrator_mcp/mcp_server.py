@@ -4,14 +4,11 @@ import sys, os
 import logging
 import json
 from llama_client import query_llama_api
-from backend.infra.redis_client import rdb, save_session, load_session, delete_session
-
 
 
 logging.basicConfig(level=logging.INFO)
 
 SERVICE_TOKEN = os.getenv("MCP_SERVICE_TOKEN", "change-me")
-
 
 mcp = FastMCP("orchestrator")
 
@@ -45,14 +42,11 @@ def semantic_products_search(user_query: dict):
     """
     Perform a semantic search for products based on user query.
     """
-    # Load last message from session to recover session state
-    last = load_session("last_message")
 
     # Call LLaMA API to extract intent/entities
     query_llama_api(user_query['query'])
     
     # Save last message to session for state persistence
-    save_session("last_message", {"message": user_query.get("query", "")})
     return {"result": "hello"}
 
 
@@ -74,6 +68,7 @@ def require_auth(request, next):
         raise PermissionError("Unauthorized: Invalid X-Service-Token header")
     
     return next(request)
+
 
 # ------------------------------------------------------
 # HEALTH TOOLS / ENDPOINTS
