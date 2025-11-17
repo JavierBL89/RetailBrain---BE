@@ -4,14 +4,14 @@ FROM python:3.11
 WORKDIR /app
 
 # Install dependencies first (to leverage Docker layer caching)
-COPY backend/requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the orchestrator code
-COPY backend/mcps/orchestrator_mcp /app/orchestrator_mcp
+# Copy the rest of the code *only for production builds*
+# (in dev, your docker-compose volume will mount the code instead)
+COPY . .
 
 # Expose MCP HTTP port
 EXPOSE 8000
 
-# Set the default command to run the orchestrator
-CMD ["python", "-m", "orchestrator_mcp.mcp_server"]
+CMD ["python", "mcp_server.py"]

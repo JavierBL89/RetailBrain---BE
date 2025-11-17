@@ -2,13 +2,23 @@ pip install watchdog
 watchmedo auto-restart --directory=. --pattern="*.py" --recursive python mcp_server.py
 
 
+### How to Test MCP server Communication from inside container
 
 ## Start container
 
  - docker compose up orchestrator -d
- 
 
- # Official MCP handshake flow
+
+2. Ensure containers are up and running
+
+ - docker compose ps
+
+3. Open Container bash
+E.g:
+- docker compose exec orchestrator bash
+
+
+## Official MCP handshake flow
 
  We must send a JSON-RPC 2.0 request with the proper method and fields
 
@@ -26,7 +36,7 @@ echo "Session ID: $SESSION"
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 195ab641c6794b24bbf643a08b4233fa" \
+  -H "mcp-session-id: 7473dbdd3acb48c386befaa8d4a47425" \
   -H "X-Service-Token: MCP_SERVICE_TOKEN" \
   -d '{"jsonrpc":"2.0","method":"notifications/initialized","params":{}}'
 
@@ -39,7 +49,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 195ab641c6794b24bbf643a08b4233fa" \
+  -H "mcp-session-id: 7473dbdd3acb48c386befaa8d4a47425" \
   -H "X-Service-Token: MCP_SERVICE_TOKEN" \
   -d '{
     "jsonrpc": "2.0",
@@ -53,7 +63,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 195ab641c6794b24bbf643a08b4233fa" \
+  -H "mcp-session-id: 7473dbdd3acb48c386befaa8d4a47425" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
   "jsonrpc": "2.0",
@@ -87,7 +97,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 195ab641c6794b24bbf643a08b4233fa" \
+  -H "mcp-session-id: 7473dbdd3acb48c386befaa8d4a47425" \
     -H "X-Service-Token: kalandrakatech1234" \
   -d '{                      
     "jsonrpc": "2.0",                                      
@@ -96,12 +106,38 @@ curl -X POST http://localhost:8000/mcp \
     "params": {
         "name": "route_request",
         "arguments" :{
-            "context": {
-                "action": "semantic_products_search",
-                "user_query": {
-                 "query": "I need stylish summer sandals, maybe around $75"
+            "action": "semantic_products_search",
+            "user_query": {
+                "query": "I need stylish summer sandals, maybe around $75"
             }
         }
+    }
+  }'
+
+## Call semantic_products_search
+  curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: 7473dbdd3acb48c386befaa8d4a47425" \
+    -H "X-Service-Token: kalandrakatech1234" \
+  -d '{                      
+    "jsonrpc": "2.0",                                      
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+        "name": "route_request",
+        "arguments" :{
+            "action": "upsert_product",
+            "product": {
+                "sku": "[master SKU]",
+                "name": "[product name]",
+                "description": "[selected description]",
+                "category": "[category]",
+                "material": "[material]",
+                "gender": "[gender]",
+                "brand": "[brand]",
+                "tags": "[comma-separated tags]"
+                }
         }
     }
   }'

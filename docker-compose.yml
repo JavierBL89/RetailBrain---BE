@@ -2,12 +2,14 @@ version: "3.8"
 
 services:
   db:
-    image: postgres:13
+    image: postgres:16-alpine
     container_name: db
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mydb
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
@@ -19,14 +21,15 @@ services:
     environment:
       - MCP_SERVICE_TOKEN=${MCP_SERVICE_TOKEN}
       - HF_SPACE_EMB_URL=${HF_SPACE_EMB_URL}
+      - DATABASE_URL=${DATABASE_URL}
       - PYTHONUNBUFFERED=1
-    volumes:
-      - ./backend:/app/backend  # Mount the backend code for access to all modules
-    command: ["python", "-m", "backend.mcps.orchestrator_mcp.mcp_server", "--reload"]
+    command: ["python", "-m", "backend.mcps.orchestrator_mcp.mcp_server"]
     ports:
       - "8000:8000"
     depends_on:
       - db
+    volumes:
+      - ./backend:/app/backend  # Mount the backend code for access to all modules
 
   n8n:
     image: n8nio/n8n
@@ -45,3 +48,5 @@ services:
     depends_on:
       - orchestrator
 
+volumes:
+  postgres_data:

@@ -3,7 +3,7 @@ import sys, os
 
 import logging
 import json
-from llama_client import query_llama_api
+from llm.llama_client import query_llama_api
 
 
 logging.basicConfig(level=logging.INFO)
@@ -13,11 +13,37 @@ SERVICE_TOKEN = os.getenv("MCP_SERVICE_TOKEN", "change-me")
 mcp = FastMCP("orchestrator")
 
 
+
+# ------------------------------------------------------
+# Tools
+# ------------------------------------------------------
+@mcp.tool
+def route_request( action: str, 
+    user_query: dict | None = None, 
+    product: dict | None = None, 
+    admin_query: dict | None = None, 
+    message: str | None = None):
+    """
+    Route incoming requests to appropriate handlers based on tool_name.
+    """   
+
+    if action == "upsert_product":
+        return upsert_product(product or {})
+    elif action == "semantic_products_search":
+        return semantic_products_search(user_query or {})
+    elif action == "health":
+        return health()
+    elif action == "echo":
+        message = action.get("message", "")
+        return echo(message)
+    else:
+        return {"error": f"Unknown action: {action}"}
+
+
 # ------------------------------------------------------
 # HEALTH TOOLS / ENDPOINTS
 # ------------------------------------------------------
-@mcp.tool
-def insert_product(product: dict) -> str:
+def upsert_product(product: dict) -> str:
     """
     Insert a new product into the inventory system.
     Currently logs the request for testing purposes.
@@ -37,7 +63,6 @@ def insert_product(product: dict) -> str:
     }, indent=2)
 
 
-@mcp.tool
 def semantic_products_search(user_query: dict):
     """
     Perform a semantic search for products based on user query.
@@ -48,26 +73,6 @@ def semantic_products_search(user_query: dict):
     
     # Save last message to session for state persistence
     return {"result": "hello"}
-
-
-# AUTH
-@mcp.tool
-def require_auth(request, next):
-    """
-    Simple service-to-service authentication middleware.
-    Ensures only requests with a valid X-Service-Token header can access the MCP.
-    """
-    token=None
-    if(hasattr(request, "headers")):
-        token = request.headers.get("X-Service-Token")
-    elif isinstance(request, dict):
-        token = request.get("headers", {}).get("X-Service-Token")
-
-    if token != SERVICE_TOKEN:
-        # Return an MCP-compliant error
-        raise PermissionError("Unauthorized: Invalid X-Service-Token header")
-    
-    return next(request)
 
 
 # ------------------------------------------------------
