@@ -14,7 +14,7 @@ load_dotenv()
 
 
 
-def query_llama_api(context: str) -> str:
+def query_gpt_api(context: str) -> str:
     """
     Query the LLaMA API with the given context.
     """
@@ -22,9 +22,6 @@ def query_llama_api(context: str) -> str:
     if context is None or context == " " or not isinstance(context, str):
         return "No context provided"
 
-    custom_message = "Sorry, Llama model is not available right now."
-
-    API_URL = "https://router.huggingface.co/v1/chat/completions"
 
     try:
         # response = requests.post(API_URL, headers=headers, data=json.dumps(payload))

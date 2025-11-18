@@ -3,7 +3,7 @@ import sys, os
 
 import logging
 import json
-from llm.gpt_client import query_llama_api
+from llm.gpt_client import query_gpt_api
 
 
 logging.basicConfig(level=logging.INFO)
@@ -43,6 +43,7 @@ def route_request( action: str,
 # ------------------------------------------------------
 # HEALTH TOOLS / ENDPOINTS
 # ------------------------------------------------------
+@mcp.tool
 def insert_product(product: dict) -> str:
     """
     Insert a new product into the inventory system.
@@ -62,14 +63,14 @@ def insert_product(product: dict) -> str:
         "product": product
     }, indent=2)
 
-
+@mcp.tool
 def semantic_products_search(user_query: dict):
     """
     Perform a semantic search for products based on user query.
     """
 
     # Call LLaMA API to extract intent/entities
-    llm_response = query_llama_api(user_query['query'])
+    llm_response = query_gpt_api(user_query['query'])
     # Save last message to session for state persistence
     return {"result": llm_response}
 
