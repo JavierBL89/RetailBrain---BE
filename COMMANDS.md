@@ -7,39 +7,8 @@
 
 - docker ps  (checks if contaner is running)
 
-##### Remove any __pychache__ (when needed)
 
-  docker compose down --volumes --remove-orphans
-  docker compose build --no-cache
-  docker compose up
-
-
-# BUILD DATABASE
-
-1. Start docker if not running
-
-  - docker-compose up -d
-
-2. List containers running and take the db container name for next step
-  
-  - docker ps
- 
-3. Copy the seed file into the container. Replace the database conatinername 
-
-  - docker cp backend/mcps/db_analytics/db/seed.sql databaseName:/tmp/seed.sql
-
-4. Load products to db container
-
- - docker exec -it retailbrain---be-db-1 psql -U hackathon_user -d mydatabase -f /tmp/seed.sql
-
-5. Verify tables 
-
-  - docker exec -it retailbrain---be-db-1 psql -U hackathon_user -d mydatabase -c "\dt"
-
-
-
-
-# INSTAL DEPENDENCIES (if needed)
+# INSTAL PYTHON DEPENDENCIES (if needed)
 
  - pip install dependencyName
 
@@ -55,7 +24,6 @@
 
 cd backend
 uvicorn main:app --reload
-
 
 
 ### Kill PORTS IN USE

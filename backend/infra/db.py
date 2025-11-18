@@ -1,3 +1,0 @@
-POSTGRES_USER=myhanckathon25
-POSTGRES_PASSWORD=NuvolarAIhanckathon25€€
-POSTGRES_DB=mydatabase

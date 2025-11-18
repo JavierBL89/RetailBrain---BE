@@ -3,7 +3,7 @@ import sys, os
 
 import logging
 import json
-from llm.llama_client import query_llama_api
+from llm.gpt_client import query_llama_api
 
 
 logging.basicConfig(level=logging.INFO)
@@ -27,8 +27,8 @@ def route_request( action: str,
     Route incoming requests to appropriate handlers based on tool_name.
     """   
 
-    if action == "upsert_product":
-        return upsert_product(product or {})
+    if action == "insert_product":
+        return insert_product(product or {})
     elif action == "semantic_products_search":
         return semantic_products_search(user_query or {})
     elif action == "health":
@@ -43,7 +43,7 @@ def route_request( action: str,
 # ------------------------------------------------------
 # HEALTH TOOLS / ENDPOINTS
 # ------------------------------------------------------
-def upsert_product(product: dict) -> str:
+def insert_product(product: dict) -> str:
     """
     Insert a new product into the inventory system.
     Currently logs the request for testing purposes.
@@ -69,10 +69,9 @@ def semantic_products_search(user_query: dict):
     """
 
     # Call LLaMA API to extract intent/entities
-    query_llama_api(user_query['query'])
-    
+    llm_response = query_llama_api(user_query['query'])
     # Save last message to session for state persistence
-    return {"result": "hello"}
+    return {"result": llm_response}
 
 
 # ------------------------------------------------------

@@ -5,3 +5,6 @@ pydantic>=2.0.0
 uvicorn
 dotenv
 redis>=5.0
+openai
+sqlalchemy>=2.0.0
+psycopg2-binary

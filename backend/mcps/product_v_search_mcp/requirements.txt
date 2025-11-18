@@ -1,7 +1,0 @@
-fastmcp
-fastapi
-chromadb
-requests>=2.31.0
-uvicorn
-dotenv
-redis>=5.0
