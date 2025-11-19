@@ -1,14 +1,24 @@
 
-# DOCKER
+# Docker comands
 
-### Run Docker containers
+## Start containers
+1. Run Docker containers
 
 - docker compose up -d
 
-- docker ps  (checks if contaner is running)
+2. List containers running. Ensure db container is running
+  
+  - docker ps
+
+## Stop and rebuild containers
+
+ - docker compose down
+ - docker compose up --build
 
 
-# INSTAL PYTHON DEPENDENCIES (if needed)
+----------------------------------------------------------------------
+
+# Install ython dependancies (if needed)
 
  - pip install dependencyName
 
@@ -18,12 +28,6 @@
 
    - pip install -r requirements.txt
 
-
-
-### Terminal 1: RUN BACKEND
-
-cd backend
-uvicorn main:app --reload
 
 
 ### Kill PORTS IN USE
