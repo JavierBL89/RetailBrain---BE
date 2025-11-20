@@ -3,21 +3,80 @@
 -- =========================================    
 INSERT INTO products (product_id, sku, name, description, category, material, gender, brand, tags_string)
 VALUES
-(9, 'MJWEDGE', 'MJ Wedge Shoe', 'Auto-generated product', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'wedge,auto'),
-(10, 'MJPATENT', 'Mary Jane Patent Shoe', 'Auto-generated product', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'mary jane,auto'),
-(11, 'PEEPSTUD', 'Studded Peep Toe', 'Auto-generated product', 'Shoes', 'Leather', 'Women', 'Unknown', 'peep toe,stud,auto'),
-(12, 'ANKLBOOT', 'Ankle Boot', 'Auto-generated product', 'Shoes', 'Leather', 'Women', 'Unknown', 'boot,ankle,auto'),
-(13, 'METSUEDE', 'Metallic Heel Shoe', 'Auto-generated product', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'heel,metallic,auto'),
-(14, 'PLATSANDL', 'Platform Sandal', 'Auto-generated product', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'sandal,platform,auto'),
-(15, 'EMBPEEP', 'Embellished Peep Toe', 'Auto-generated product', 'Shoes', 'Leather', 'Women', 'Unknown', 'peep toe,embellished,auto'),
-(16, 'MJWEDGE-BRN', 'MJ Wedge Shoe (Brown)', 'Auto product', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'wedge,auto'),
-(17, 'STUDCLR', 'Stud Clear Shoe', 'Auto-generated product', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'stud,clear,auto'),
-(18, 'CLRWEDGE', 'Clear Wedge Gold', 'Auto-generated product', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'wedge,clear,gold,auto'),
-(19, 'COMF3-BEI', 'Comfort 3 Shoe Beige', 'Comfort shoes', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'comfort,auto'),
-(20, 'COMF3-BLK', 'Comfort 3 Shoe Black', 'Comfort shoes', 'Shoes', 'Synthetic', 'Women', 'Unknown', 'comfort,auto'),
-(21, 'HTBOOT', 'High Top Boot', 'Auto-generated product', 'Shoes', 'Leather', 'Women', 'Unknown', 'boot,high,auto'),
-(22, 'RIDING-BLK', 'Riding Boot Black', 'Auto-generated product', 'Shoes', 'Leather', 'Women', 'Unknown', 'riding,boot,auto'),
-(23, 'RIDING-COG', 'Riding Boot Cognac', 'Auto-generated product', 'Shoes', 'Leather', 'Women', 'Unknown', 'riding,boot,auto')
+(9, 'MJWEDGE-BLK', 'MJ Wedge Shoe',
+ 'Enjoy the perfect blend of height and comfort with this Mary Jane wedge that takes you from office to evening effortlessly. The secure ankle strap ensures stability while the wedge platform provides all-day wearability without compromising on elegance.',
+ 'Shoes', 'Synthetic Leather', 'Women', 'Aldo',
+ 'black wedge, mary jane style, ankle strap, synthetic leather, aldo, casual wear, dress shoes, platform wedge, comfortable heel, aldo, women''s shoes'),
+
+(10, 'MJPATENT', 'Mary Jane Patent Shoe',
+ 'Step into polished sophistication with this patent Mary Jane that adapts to any dress code. The stable block heel offers confident stride while the classic ankle strap keeps you secure through busy days and special occasions alike.',
+ 'Shoes', 'Synthetic', 'Women', 'Aldo',
+ 'black patent leather, mary jane style, block heel, ankle strap, synthetic leather, aldo, casual wear, dress shoes, formal wear, glossy finish, aldo, women''s shoes, low-heel, medium-heel'),
+
+(11, 'PEEPSTUD', 'Studded Peep Toe',
+ 'Command attention at every special event with these show-stopping studded heels. The peep toe design keeps you comfortable while the bold red hue and metallic stud detailing ensure you stand out, making these the perfect choice for weddings, galas, and celebrations.',
+ 'Shoes', 'Leather', 'Women', 'Clarks',
+ 'red peep toe, studded heels, clarks, stiletto heel, leather, formal wear, special occasion, dress shoes, statement heels, high-heel, aldo, women''s shoes'),
+
+(12, 'ANKLBOOT', 'Ankle Boot',
+ 'Elevate your evening wardrobe with these sleek ankle boots that deliver runway-ready height without sacrificing stability. The platform base balances the dramatic heel while the side zipper ensures easy on-and-off, making these your go-to choice for formal events and nights out.',
+ 'Boot', 'Synthetic Leather', 'Women', 'Clarks',
+ 'black ankle boot, high heel boot, synthetic leather, formal wear, stiletto heel, platform boot, side zipper, dress boots, clarks, women''s boots'),
+
+(13, 'METSUEDE', 'Metallic Heel Shoe',
+ 'Step confidently into any event with these dramatic platform heels that maximize height while maintaining comfort. The elevated platform front reduces the pitch of the heel, letting you stand tall through extended wear at formal gatherings and special occasions.',
+ 'Platform-Shoes', 'Suede', 'Women', 'Aldo',
+ 'black platform heels, synthetic suede, stiletto heel, platform pumps, formal wear, dress shoes, high heel, slip-on, aldo, women''s platform shoes'),
+
+(14, 'PLATSANDL', 'Platform Shandal',
+ 'Make a vibrant statement at your next celebration with these eye-catching platform sandals. The supportive strappy design keeps your feet secure while the platform base provides added comfort for dancing and mingling through weddings, parties, and special events.',
+ 'Platform-Shandals', 'Synthetic Leather', 'Women', 'Clarks',
+ 'range platform sandal, strappy heels, synthetic leather, stiletto heel, dress shoes, special occasion, party heels, high heel sandal, clarks, women''s platform sandals'),
+
+(15, 'EMBPEEP', 'Embellished Peep Toe',
+ 'Turn heads at every celebration with these stunning peep toe heels featuring elegant toe embellishments. The open-toe design keeps you comfortable while the bold red color and decorative studs ensure you shine at weddings, parties, and all your special moments.',
+ 'Shoes', 'Synthetic', 'Women', 'Clarks',
+ 'red peep toe, embellished heels, synthetic leather, stiletto heel, high-heel, special occasion, dress shoes, party heels, studded toe, clarks, women''s heels'),
+
+(16, 'MJWEDGE-BRN', 'MJ Wedge Shoe (Brown)',
+ 'Enjoy the perfect blend of height and comfort with this Mary Jane wedge that takes you from office to evening effortlessly. The secure ankle strap ensures stability while the wedge platform provides all-day wearability without compromising on elegance.',
+ 'Shoes', 'Synthetic Leather', 'Women', 'Aldo',
+ 'brown wedge, mary jane style, ankle strap, synthetic leather, aldo, casual wear, dress shoes, platform wedge, low-heel, comfortable heel, aldo, women''s shoes'),
+
+(17, 'STUDCLR', 'Stud Clear Shoe',
+ 'Stand out at your next event with these modern sandals featuring transparent straps and eye-catching stud details. The unique sculptural heel adds contemporary flair while the secure strap design keeps you comfortable through parties, cocktail events, and dressy occasions.',
+ 'Shandals', 'Synthetic', 'Women', 'Zara',
+ 'black studded sandal, clear strap heels, transparent straps, synthetic leather, special occasion, dress shoes, party heels, medium-heels, sculptural heel, zara, women''s sandals'),
+
+(18, 'CLRWEDGE', 'Clear Wedge Gold',
+ 'Combine elegance with comfort in these stunning wedge sandals featuring delicate transparent straps and luxe gold accents. The wedge heel provides stability for dancing and socializing through parties and special events while the barely-there design keeps your look light and sophisticated.',
+ 'Shandals', 'Synthetic', 'Women', 'Zara',
+ 'gold wedge sandal, clear straps, transparent heels, synthetic leather, special occasion, dress shoes, party heels, low-heel, minimalist design, zara, women''s wedge sandals'),
+
+(19, 'COMF3-BEI', 'Comfort 3 Shoe Beige',
+ 'Discover all-day comfort with these practical sandals designed for extended wear. The adjustable velcro straps ensure a personalized fit while the cushioned footbed supports your feet through long walks, errands, and everyday activities without compromising on style.',
+ 'Comfort Shandals', 'Synthetic', 'Women', 'Aldo',
+ 'comfort sandals, walking shoes, adjustable straps, beige, synthetic leather, casual wear, velcro straps, cushioned footbed, everyday comfort, aldo, women''s comfort shoes'),
+
+(20, 'COMF3-BLK', 'Comfort 3 Shoe Black',
+ 'Discover all-day comfort with these practical sandals designed for extended wear. The adjustable velcro straps ensure a personalized fit while the cushioned footbed supports your feet through long walks, errands, and everyday activities without compromising on style.',
+ 'Comfort Shandals', 'Synthetic', 'Women', 'Aldo',
+ 'comfort sandals, walking shoes, adjustable straps, synthetic leather, casual wear, black, velcro straps, cushioned footbed, everyday comfort, aldo, women''s comfort shoes'),
+
+(21, 'HTBOOT', 'High Top Boot',
+ 'Elevate your everyday style with these versatile knee-high boots that transition seamlessly from casual outings to dressier occasions. The sleek silhouette flatters your legs while the side zipper ensures easy wear, making these your go-to boots for creating polished looks all season long.',
+ 'Boots', 'Synthetic Leather', 'Women', 'Zara',
+ 'brown knee-high boot, stiletto heel, synthetic leather, dress boots, casual wear, high top boot, side zipper, fashion boots, zara, women''s boots'),
+
+(22, 'RIDING-BLK', 'Riding Boot Black',
+ 'Step into effortless everyday style with these classic riding boots that deliver all-day comfort without sacrificing sophistication. The low heel and cushioned footbed support your feet through busy days while the timeless silhouette pairs perfectly with jeans, leggings, or dresses for versatile wear.',
+ 'Boots', 'Synthetic Leather', 'Women', 'Aldo',
+ 'black riding boot, low heel boot, synthetic leather, casual wear, everyday comfort, knee-high boot, side zipper, equestrian style, aldo, women''s boots'),
+
+(23, 'RIDING-COG', 'Riding Boot Cognac',
+ 'Step into effortless everyday style with these classic riding boots that deliver all-day comfort without sacrificing sophistication. The low heel and cushioned footbed support your feet through busy days while the timeless silhouette pairs perfectly with jeans, leggings, or dresses for versatile wear.',
+ 'Boots', 'Synthetic Leather', 'Women', 'Aldo',
+ 'cognac riding boot, low heel boot, synthetic leather, casual wear, everyday comfort, knee-high boot, side zipper, equestrian style, aldo, women''s boots')
 ON CONFLICT (product_id) DO NOTHING;
 
 -- =========================================    
