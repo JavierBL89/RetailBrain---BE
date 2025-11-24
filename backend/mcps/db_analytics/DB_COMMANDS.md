@@ -208,3 +208,93 @@ GROUP BY payment_method
 ORDER BY transactions DESC;
 "
 ```
+
+
+
+
+-----------------
+**Product Update:**
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "
+UPDATE products
+SET 
+    sku = COALESCE($2, sku),
+    category = COALESCE($3, category),
+    brand = COALESCE($4, brand)
+WHERE product_id = $1;
+```
+
+
+**Product variant Update:**
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "
+UPDATE product_variants
+SET
+    variant_sku = COALESCE($2, variant_sku),
+    name = COALESCE($3, name),
+    description = COALESCE($4, description),
+    category = COALESCE($5, category),
+    color = COALESCE($6, color),
+    material = COALESCE($7, material),
+    gender = COALESCE($8, gender),
+    brand = COALESCE($9, brand),
+    price = COALESCE($10, price),
+    image_url = COALESCE($11, image_url),
+    tags_string = COALESCE($12, tags_string)
+WHERE variant_id = $1;
+```
+
+
+**Size Update:**
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "
+UPDATE sizes
+SET size_label = COALESCE($2, size_label)
+WHERE size_id = $1;
+```
+
+
+
+**Size variant Update:**
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "
+UPDATE variant_sizes
+SET
+    stock_quantity = COALESCE($3, stock_quantity),
+    available = COALESCE($4, available)
+WHERE variant_id = $1 AND size_id = $2;
+```
+
+
+**Delete product** (deletes in cascade the product, all its variants, all variant-size entries)
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "
+DELETE FROM products
+WHERE product_id = $1
+RETURNING *;
+```
+
+
+**Delete product variant**
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "
+DELETE FROM product_variants
+WHERE variant_id = $1
+RETURNING *;
+```
+
+**Dele Size** and all variant-size links
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "
+DELETE FROM sizes
+WHERE size_id = $1
+RETURNING *;
+```
+
+**Delete variant size** (single size entry)
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "
+DELETE FROM variant_sizes
+WHERE variant_id = $1 AND size_id = $2
+RETURNING *;
+```

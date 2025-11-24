@@ -1,10 +1,18 @@
 from fastmcp import FastMCP
 import sys, os
-
+from pathlib import Path
 import logging
 import json
-from llm.gpt_client import query_gpt_api
 
+# Add project root to path
+project_root = Path(__file__).parent.parent.parent.parent
+sys.path.insert(0, str(project_root))
+
+
+from llm.gpt_client import query_gpt_api
+from backend.mcps.product_v_search.main import process_search
+from backend.mcps.product_v_search.main import upsert_products
+from backend.mcps.db_analytics.inventory_manager import insert_new_product_sql
 
 logging.basicConfig(level=logging.INFO)
 
@@ -18,19 +26,25 @@ mcp = FastMCP("orchestrator")
 # Tools
 # ------------------------------------------------------
 @mcp.tool
-def route_request( action: str, 
-    user_query: dict | None = None, 
-    product: dict | None = None, 
-    admin_query: dict | None = None, 
-    message: str | None = None):
+def route_request( action: str,  
+    product: dict | None = None,
+    user_query: dict | None = None,
+    conversation_id: str | None = None,):
     """
     Route incoming requests to appropriate handlers based on tool_name.
     """   
 
     if action == "insert_product":
-        return insert_product(product or {})
+        # Insert new product into SQL database
+        try:
+            new_variants_list = insert_new_product_sql(product or {})
+        except Exception as e:
+            return {"error": f"Failed to insert product into SQL db: {str(e)}"}
+        
+        return upsert_product(new_variants_list)
+    
     elif action == "semantic_products_search":
-        return semantic_products_search(user_query or {})
+        return vector_search(conversation_id, user_query or {})
     elif action == "health":
         return health()
     elif action == "echo":
@@ -43,8 +57,7 @@ def route_request( action: str,
 # ------------------------------------------------------
 # HEALTH TOOLS / ENDPOINTS
 # ------------------------------------------------------
-@mcp.tool
-def insert_product(product: dict) -> str:
+def upsert_product(product: dict) -> str:
     """
     Insert a new product into the inventory system.
     Currently logs the request for testing purposes.
@@ -63,14 +76,45 @@ def insert_product(product: dict) -> str:
         "product": product
     }, indent=2)
 
-@mcp.tool
-def semantic_products_search(user_query: dict):
+
+
+chat_memory={} # Dict[str, List[Dict[str, str]]]
+
+def vector_search(conversation_id:str, user_query: dict):
     """
     Perform a semantic search for products based on user query.
     """
+    if conversation_id not in chat_memory:
+        chat_memory[conversation_id] = []
+
+
+    current_user_text = user_query.get('query', '')
+    # Add user query to conversation history
+    chat_memory[conversation_id].append({"role": "user", "content": current_user_text})
 
     # Call LLaMA API to extract intent/entities
-    llm_response = query_gpt_api(user_query['query'])
+    llm_response = query_gpt_api(chat_memory[conversation_id])
+
+    if llm_response is None:
+        llm_response = "Sorry, something went wrong."
+ 
+
+    if isinstance(llm_response, dict) and llm_response.get("structured_data"):
+        # convert string to dict and build the embedded document
+        try:
+            structured_query = llm_response["structured_data"]
+            print("Structured Query Extracted:", structured_query)
+            print(process_search(structured_query))
+            #return process_search(structured_query)
+
+        except json.JSONDecodeError:
+            print("❌ Could not parse structured query:", structured_query)
+    
+    # Extract Assistant action if present
+    assistant_text = llm_response if isinstance(llm_response, str) else llm_response.get("user_text", str(llm_response))
+
+    # Save LLM response to conversation history
+    chat_memory[conversation_id].append({"role": "assistant", "content": assistant_text})
     # Save last message to session for state persistence
     return {"result": llm_response}
 

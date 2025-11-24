@@ -17,39 +17,36 @@ def init_db():
     Base.metadata.create_all(bind=engine)
     print("Schema created.")
 
-
 def get_db_connection():
     """
     Establish a connection to the PostgreSQL database using environment variables.
+    Handles both Docker (service name 'db') and production (Render) environments.
     """
     db_url = os.getenv("DATABASE_URL")
-        # If Render provides DATABASE_URL, use it
+    
     if db_url:
         # Parse the URL
         url = urlparse(db_url)
-
         host = url.hostname
-
-        # If running locally, override Docker hostname
-        if host == "db":
-            host = "localhost"
-
+        
+        # Keep 'db' hostname when running in Docker
+        # Only override if explicitly running locally (not in container)
+        
         return psycopg2.connect(
             database=url.path.lstrip("/"),
             user=url.username,
             password=url.password,
-            host=host,
+            host=host,  # Use 'db' when in Docker, actual host for Render
             port=url.port,
             sslmode=os.getenv("DB_SSLMODE", "disable")
         )
     
-    # Otherwise, use local env variables
+    # Fallback: use Docker service name by default
     return psycopg2.connect(
-        host="localhost",
-        port=os.getenv("DB_PORT"),
-        dbname=os.getenv("DB_NAME"),
-        user=os.getenv("POSTGRES_USER"),
-        password=os.getenv("POSTGRES_PASSWORD"),
-        sslmode=os.getenv("DB_SSLMODE", "disable")  # Render will override this
-
+        host=os.getenv("DB_HOST", "db"),  # Changed from "localhost" to "db"
+        port=os.getenv("DB_PORT", "5432"),
+        dbname=os.getenv("DB_NAME", "mydatabase"),
+        user=os.getenv("POSTGRES_USER", "hackathon_user"),
+        password=os.getenv("POSTGRES_PASSWORD", "hackathon_pass"),
+        sslmode=os.getenv("DB_SSLMODE", "disable")
     )

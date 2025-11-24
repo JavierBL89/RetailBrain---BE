@@ -12,13 +12,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS products (
     product_id     SERIAL PRIMARY KEY,
     sku            VARCHAR(50) NOT NULL,
-    name           VARCHAR(255) NOT NULL,
-    description    TEXT,
     category       VARCHAR(100),
-    material       VARCHAR(100),
-    gender         VARCHAR(50),
-    brand          VARCHAR(100),
-    tags_string    TEXT,
+    brand          VARCHAR(50),
     created_at     TIMESTAMP DEFAULT NOW(),
     updated_at     TIMESTAMP DEFAULT NOW()
 );
@@ -59,9 +54,16 @@ CREATE TABLE IF NOT EXISTS product_variants (
     variant_id   SERIAL PRIMARY KEY,
     product_id   INTEGER NOT NULL REFERENCES products(product_id) ON DELETE CASCADE,
     variant_sku  VARCHAR(50) NOT NULL,
-    color        VARCHAR(100),
+    name         VARCHAR(100) NOT NULL,
+    description  VARCHAR(500) NOT NULL,
+    category     VARCHAR(50),
+    color        VARCHAR(50),
+    material     VARCHAR(50),
+    gender       VARCHAR(25),
+    brand        VARCHAR(50),
     price        NUMERIC(10,2) NOT NULL,
     image_url    TEXT,
+    tags_string  TEXT,
     created_at   TIMESTAMP DEFAULT NOW(),
     updated_at   TIMESTAMP DEFAULT NOW()
 );
@@ -78,14 +80,36 @@ CREATE TABLE IF NOT EXISTS variant_sizes (
     PRIMARY KEY (variant_id, size_id)
 );
 
+
+-- ============================================
+-- Product Variant metadata
+-- ============================================
+CREATE TABLE IF NOT EXISTS variant_metadata (
+    metadata_id SERIAL PRIMARY KEY,
+    variant_id INTEGER NOT NULL UNIQUE REFERENCES product_variants(variant_id) ON DELETE CASCADE,
+
+    brand TEXT,
+    category TEXT,
+    color TEXT,
+    material TEXT,
+    heel_type TEXT,
+    heel_height TEXT,
+    tags_string TEXT,
+    occasion TEXT,
+
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+
+
 -- ============================================
 -- TABLE: sales
 -- ============================================
 
 CREATE TABLE IF NOT EXISTS sales (
     sale_id        SERIAL PRIMARY KEY,
-    customer_name  VARCHAR(255),
-    location       VARCHAR(100),
+    customer_city  VARCHAR(255),
     payment_method VARCHAR(100),
     sale_date      TIMESTAMP DEFAULT NOW()
 );
@@ -100,4 +124,20 @@ CREATE TABLE IF NOT EXISTS sale_line_item (
     variant_id   INTEGER NOT NULL REFERENCES product_variants(variant_id) ON DELETE CASCADE,
     quantity     INTEGER NOT NULL CHECK (quantity > 0),
     unit_price   NUMERIC(10,2) NOT NULL
+);
+
+-- ============================================
+-- TABLE: sale_line_item
+-- ============================================
+CREATE TABLE cities (
+    id SERIAL PRIMARY KEY,
+    city TEXT NOT NULL
+);
+
+-- ============================================
+-- TABLE: sale_line_item
+-- ============================================
+CREATE TABLE payment_methods (
+    method_id SERIAL PRIMARY KEY,
+    method_name TEXT NOT NULL UNIQUE
 );
