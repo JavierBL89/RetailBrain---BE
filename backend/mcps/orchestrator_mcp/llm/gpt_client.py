@@ -14,27 +14,27 @@ load_dotenv()
 
 
 
-def query_gpt_api(context: str) -> str:
+def query_gpt_api(context: list) -> str:
     """
     Query the LLaMA API with the given context.
     """
 
-    if context is None or context == " " or not isinstance(context, str):
+    if not context or not isinstance(context, list):
         return "No context provided"
 
 
     try:
         # response = requests.post(API_URL, headers=headers, data=json.dumps(payload))
-        
+        # "version": "5" is good  "6"
         response= client.responses.create(
             prompt={
                 "id": "pmpt_691b370b69a8819488c4df0af9dfe6880f6df17c89108ed1",
-                "version": "2"
+                "version": "16"
             },
             model="gpt-4o-mini",
             temperature=0.1,
             top_p=0.9,
-            input= [{"role" : "user","content" : context}],
+            input= context,
         )
 
         if response is not None:
@@ -46,7 +46,7 @@ def query_gpt_api(context: str) -> str:
 
         else:
             logging.info("Error: No response received from OpenAi API")
-            return custom_message
+            return "No response received from OpenAi API"
         
 
     except Exception as e:
