@@ -6,8 +6,8 @@ import json
 
 
 from llm.gpt_client import query_gpt_api
-from backend.mcps.product_v_search.main import process_search
-from backend.mcps.product_v_search.main import upsert_products
+#from backend.mcps.product_v_search.main import process_search
+#from backend.mcps.product_v_search.main import upsert_products
 from backend.mcps.db_analytics.inventory_manager import insert_new_product_sql
 
 logging.basicConfig(level=logging.INFO)
@@ -32,12 +32,14 @@ def route_request( action: str,
 
     if action == "insert_product":
         # Insert new product into SQL database
-        try:
-            new_variants_list = insert_new_product_sql(product or {})
-        except Exception as e:
-            return {"error": f"Failed to insert product into SQL db: {str(e)}"}
+        # try:
+        #    new_variants_list = insert_new_product_sql(product or {})
+        #except Exception as e:
+        ##    return {"error": f"Failed to insert product into SQL db: {str(e)}"}
+        ##return {"Products added to SQL db ": new_variants_list}
         
-        return upsert_product(new_variants_list)
+        return "Route request tool reached for insert_product"
+        #return upsert_product(product or {})  ## Product vector db insertion 
     
     elif action == "semantic_products_search":
         return vector_search(conversation_id, user_query or {})
