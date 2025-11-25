@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from models import Base
+from mcps.db.models import Base
 
 class SaleLineItem(Base):
     __tablename__ = "sale_line_item"

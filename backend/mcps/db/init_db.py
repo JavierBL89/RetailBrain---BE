@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 import psycopg2
-from models import Base
+from mcps.db.models import Base
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 

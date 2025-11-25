@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 
-from mcps.db_analytics.db.init_db import get_db_connection
+from mcps.db.init_db import get_db_connection
 
 def insert_new_product_sql(products_data: dict | list ) -> list:
     """
@@ -446,12 +446,12 @@ def fetch_products_by_product_id_sql(product_ids):
     return list(products.values())
 
 
-def fetch_all_products_variants():
+def fetch_all_product_variants():
     """
     Fetch all product variants from the database.
     """
     query = """
-        SELECT id, name, price, stock  -- Replace with actual column names
+        SELECT *
         FROM product_variants
     """
     
@@ -462,3 +462,53 @@ def fetch_all_products_variants():
             rows = cur.fetchall()
     
     return rows
+
+
+def get_products_variants_with_images():
+    """
+    Fetch all product variants and encode their images in base64.
+    """
+    rows = fetch_all_product_variants()
+    products = []
+
+    for r in rows:
+        product = {
+            "id": r[0],
+            "variant_id": r[1],
+            "sku": r[2],
+            "name": r[3],
+            "description": r[4],
+            "category": r[5],
+            "color": r[6],
+            "material": r[7],
+            "gender": r[8],
+            "brand": r[9],
+            "price": r[10],
+            "image": r[11],
+            "keywords": r[12],
+            "created_at": r[13],
+            "updated_at": r[14],
+        }
+
+        filename = product["image"]
+
+        # Ignore external URLs (like example.com)
+        if isinstance(filename, str) and not filename.startswith("http"):
+            product["image_base64"] = encode_image_base64(filename)
+        else:
+            product["image_base64"] = None
+
+        products.append(product)
+
+    return products
+
+
+###  Heper functions ###
+import base64
+from pathlib import Path
+
+def encode_image_base64(filename: str) -> str:
+    image_path = Path("backend/static/images") / filename
+    if image_path.exists():
+        return base64.b64encode(image_path.read_bytes()).decode("utf-8")
+    return None

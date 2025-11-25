@@ -5,10 +5,13 @@ import logging
 import json
 
 
+
 from llm.gpt_client import query_gpt_api
 #from mcps.product_v_search.main import process_search
 #from mcps.product_v_search.main import upsert_products
-from mcps.inventory_management.inventory_manager import insert_new_product_sql, fetch_all_products_variants
+
+
+from mcps.inventory_management.inventory_manager import insert_new_product_sql, get_products_variants_with_images
 
 logging.basicConfig(level=logging.INFO)
 
@@ -44,7 +47,7 @@ def route_request( action: str,
         return process_vector_search(conversation_id, user_query or {})
     
     elif action == "fetch_products":
-        return fetch_all_products_variants()
+        return get_products_variants_with_images()
     
     elif action == "health":
         return health()

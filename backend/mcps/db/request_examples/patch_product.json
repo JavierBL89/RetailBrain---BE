@@ -1,0 +1,50 @@
+/****
+cURL request for batch REPLACE (full update of 2 products)
+***/
+
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: YOUR_SESSION_ID_HERE" \
+  -H "X-Service-Token: kalandrakatech1234" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+      "name": "route_request",
+      "arguments": {
+        "action": "update_product",
+        "mode": "patch",
+        "products": [
+          {
+            "product_id": 24,
+            "sku": "MASTER-123-PATCHED",
+            "variants": [
+              {
+                "variant_id": 52,
+                "price": 69.99
+              }
+            ]
+          },
+
+          {
+            "product_id": 25,
+            "category": "Winter Boots",
+            "variants": [
+              {
+                "variant_id": 53,
+                "sizes": [
+                  {
+                    "size_id": 2,
+                    "stock_quantity": 20,
+                    "available": true
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }'

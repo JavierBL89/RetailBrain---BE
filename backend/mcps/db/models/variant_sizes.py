@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
-from models import Base
+from mcps.db.models import Base
 
 
 class VariantSize(Base):

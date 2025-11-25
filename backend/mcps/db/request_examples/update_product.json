@@ -1,0 +1,77 @@
+/****
+cURL request for batch REPLACE (full update of 2 products)
+***/
+
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: YOUR_SESSION_ID_HERE" \
+  -H "X-Service-Token: kalandrakatech1234" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+      "name": "route_request",
+      "arguments": {
+        "action": "update_product",
+        "mode": "replace",
+        "products": [
+          {
+            "product_id": 24,
+            "sku": "MASTER-123-UPDATED",
+            "category": "Footwear",
+            "brand": "Kalandraka",
+            "variants": [
+              {
+                "variant_id": 52,
+                "variant_sku": "MASTER-123-BEIGE-NEW",
+                "name": "Elegant Summer Sandals v2",
+                "description": "Updated full description for beige sandals.",
+                "category": "Footwear",
+                "color": "Beige",
+                "material": "Leather",
+                "gender": "Women",
+                "brand": "Kalandraka",
+                "price": 64.99,
+                "image_url": "https://example.com/new-sandals-beige.jpg",
+                "tags_string": "sandals,summer,beige,comfort,updated",
+                "sizes": [
+                  { "size_id": 1, "stock_quantity": 12, "available": true },
+                  { "size_id": 2, "stock_quantity": 5, "available": true },
+                  { "size_id": 3, "stock_quantity": 0, "available": false }
+                ]
+              }
+            ]
+          },
+          {
+            "product_id": 25,
+            "sku": "MASTER-456-UPDATED",
+            "category": "Boots",
+            "brand": "Zara",
+            "variants": [
+              {
+                "variant_id": 53,
+                "variant_sku": "MASTER-456-BLACK-NEW",
+                "name": "High Performance Winter Boot",
+                "description": "Updated boot designed for winter storms.",
+                "category": "Boots",
+                "color": "Black",
+                "material": "Synthetic Leather",
+                "gender": "Women",
+                "brand": "Zara",
+                "price": 129.00,
+                "image_url": "https://example.com/boot-black.jpg",
+                "tags_string": "boots,winter,black,insulated,updated",
+                "sizes": [
+                  { "size_id": 1, "stock_quantity": 8, "available": true },
+                  { "size_id": 2, "stock_quantity": 3, "available": true },
+                  { "size_id": 3, "stock_quantity": 0, "available": false }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }'
