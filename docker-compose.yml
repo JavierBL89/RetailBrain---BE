@@ -19,8 +19,9 @@ services:
       - "5432:5432"
 
   orchestrator:
-    build: ./backend/mcps/orchestrator_mcp
-    container_name: orchestrator
+    build:
+      context: ./backend          # ← SAME as Render build context
+      dockerfile: mcps/orchestrator_mcp/Dockerfile  # ← SAME Dockerfile path as Render
     env_file:
       - .env
     environment:
