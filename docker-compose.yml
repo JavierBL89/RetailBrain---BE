@@ -28,6 +28,7 @@ services:
       - HF_SPACE_EMB_URL=${HF_SPACE_EMB_URL}
       - DATABASE_URL=${DATABASE_URL}
       - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app/backend
     command: ["python", "-m", "backend.mcps.orchestrator_mcp.mcp_server"]
     ports:
       - "8000:8000"
