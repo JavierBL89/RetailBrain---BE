@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, Float, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from backend.models import Base
+from models import Base
 
 class SaleLineItem(Base):
     __tablename__ = "sale_line_item"

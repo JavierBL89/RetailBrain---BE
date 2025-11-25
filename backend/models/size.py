@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from backend.models import Base
+from models import Base
 
 
 class Size(Base):
