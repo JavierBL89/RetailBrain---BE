@@ -8,7 +8,7 @@ import json
 from llm.gpt_client import query_gpt_api
 #from mcps.product_v_search.main import process_search
 #from mcps.product_v_search.main import upsert_products
-from mcps.db_analytics.inventory_manager import insert_new_product_sql
+from mcps.inventory_management.inventory_manager import insert_new_product_sql, fetch_all_products_variants
 
 logging.basicConfig(level=logging.INFO)
 
@@ -27,9 +27,8 @@ def route_request( action: str,
     user_query: dict | None = None,
     conversation_id: str | None = None,):
     """
-    Route incoming requests to appropriate handlers based on tool_name.
+    Route incoming requests to appropriate handlers based on action name.
     """   
-
     if action == "insert_product":
         # Insert new product into SQL database
         # try:
@@ -42,20 +41,21 @@ def route_request( action: str,
         #return upsert_product(product or {})  ## Product vector db insertion 
     
     elif action == "semantic_products_search":
-        #return vector_search(conversation_id, user_query or {})
-        return "Route request tool reached for semantic_products_search"
+        return process_vector_search(conversation_id, user_query or {})
+    
+    elif action == "fetch_products":
+        return fetch_all_products_variants()
     
     elif action == "health":
         return health()
-    
     elif action == "echo":
-
         message = action.get("message", "")
         return echo(message)
     else:
         return {"error": f"Unknown action: {action}"}
 
 
+    
 # ------------------------------------------------------
 # HEALTH TOOLS / ENDPOINTS
 # ------------------------------------------------------
@@ -79,6 +79,46 @@ def upsert_product(product: dict) -> str:
     }, indent=2)
 
 
+
+chat_memory={} # Dict[str, List[Dict[str, str]]]
+
+def process_vector_search(conversation_id:str, user_query: dict):
+    """
+    Perform a semantic search for products based on user query.
+    """
+    if conversation_id not in chat_memory:
+        chat_memory[conversation_id] = []
+
+
+    current_user_text = user_query.get('query', '')
+    # Add user query to conversation history
+    chat_memory[conversation_id].append({"role": "user", "content": current_user_text})
+
+    # Call LLaMA API to extract intent/entities
+    llm_response = query_gpt_api(chat_memory[conversation_id])
+
+    if llm_response is None:
+        llm_response = "Sorry, something went wrong."
+ 
+
+    if isinstance(llm_response, dict) and llm_response.get("structured_data"):
+        # convert string to dict and build the embedded document
+        try:
+            structured_query = llm_response["structured_data"]
+            print("Structured Query Extracted:", structured_query)
+            #print(process_search(structured_query))
+            #return process_search(structured_query)
+
+        except json.JSONDecodeError:
+            print("❌ Could not parse structured query:", structured_query)
+    
+    # Extract Assistant action if present
+    assistant_text = llm_response if isinstance(llm_response, str) else llm_response.get("user_text", str(llm_response))
+
+    # Save LLM response to conversation history
+    chat_memory[conversation_id].append({"role": "assistant", "content": assistant_text})
+    # Save last message to session for state persistence
+    return {"result": llm_response}
 
 
 # ------------------------------------------------------
