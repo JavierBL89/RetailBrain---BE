@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 
 
-from backend.mcps.db_analytics.db.init_db import get_db_connection
+from mcps.db_analytics.db.init_db import get_db_connection
 
 def insert_new_product_sql(products_data: dict | list ) -> list:
     """
