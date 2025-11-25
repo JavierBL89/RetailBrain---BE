@@ -4,10 +4,6 @@ from pathlib import Path
 import logging
 import json
 
-# Add project root to path
-project_root = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(project_root))
-
 
 from llm.gpt_client import query_gpt_api
 from backend.mcps.product_v_search.main import process_search
@@ -140,7 +136,12 @@ def echo(message: str) -> str:
 # RUN SERVER (STREAMABLE HTTP MODE)
 if __name__ == "__main__":
     # Expose the MCP server as a Streamable HTTP endpoint
+    
     print("FastMCP Orchestrator started on port 8000")
-
     mcp.run(transport="http", host="0.0.0.0", port=8000)
+    
     #mcp.run(transport="http", host="127.0.0.1", port=8000) # Use this for local 
+    
+    ###### Use stdio transport for Claude Desktop ######
+    #print("FastMCP Orchestrator started with stdio transport", file=sys.stderr)
+    #mcp.run(transport="stdio")

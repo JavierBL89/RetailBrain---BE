@@ -3,6 +3,8 @@ FROM python:3.11
 # Set the working directory
 WORKDIR /app
 
+ENV PYTHONPATH="/app:${PYTHONPATH}"
+
 # Install dependencies first (to leverage Docker layer caching)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

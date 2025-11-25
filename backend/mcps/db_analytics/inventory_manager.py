@@ -3,11 +3,6 @@ import os
 from pathlib import Path
 
 
-# Add project root to path
-project_root = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(project_root))
-
-
 from backend.mcps.db_analytics.db.init_db import get_db_connection
 
 def insert_new_product_sql(products_data: dict | list ) -> list:
