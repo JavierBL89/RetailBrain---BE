@@ -16,4 +16,4 @@ COPY . .
 # Expose MCP HTTP port
 EXPOSE 8000
 
-CMD ["python", "mcp_server.py"]
+CMD ["python", "mcps/orchestrator_mcp/mcp_server.py"]
