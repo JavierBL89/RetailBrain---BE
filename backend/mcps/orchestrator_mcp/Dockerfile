@@ -6,7 +6,7 @@ WORKDIR /app
 ENV PYTHONPATH="/app:${PYTHONPATH}"
 
 # Install dependencies first (to leverage Docker layer caching)
-COPY requirements.txt .
+COPY mcps/orchestrator_mcp/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the code *only for production builds*
