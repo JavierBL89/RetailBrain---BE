@@ -6,9 +6,9 @@ import json
 
 
 from llm.gpt_client import query_gpt_api
-#from backend.mcps.product_v_search.main import process_search
-#from backend.mcps.product_v_search.main import upsert_products
-from backend.mcps.db_analytics.inventory_manager import insert_new_product_sql
+#from mcps.product_v_search.main import process_search
+#from mcps.product_v_search.main import upsert_products
+from mcps.db_analytics.inventory_manager import insert_new_product_sql
 
 logging.basicConfig(level=logging.INFO)
 
