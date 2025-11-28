@@ -16,7 +16,6 @@ from mcps.product_v_search.main import upsert_products
 
 from mcps.inventory_management.inventory_manager import insert_new_product_sql, get_products_variants_with_images, inventory_manager
 from mcps.analytics.data_reports_manager import data_reports_mgr
-from mcps.analytics.data_metrics_manager import data_metrics_mgr
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -32,20 +31,32 @@ mcp = FastMCP("orchestrator")
 # ------------------------------------------------------
 @mcp.tool
 def route_request(
-    action: str, 
-    arguments:str| None= None, 
+    action: str,
+    arguments: str | None = None,
     products: Any | None = None,
-    user_query: Any | None = None,
-    conversation_id: str | None = None): 
+    user_query: dict | str | None = None,
+    conversation_id: str | None = None,
+):
     """
     Route incoming requests to appropriate handlers based on action name.
     """  
 
+    # Normalize `user_query`: accept either a dict/object or a JSON string.
+    # Some MCP clients (or integrations) may stringify the object; this makes
+    # the server tolerant and returns a clear error if parsing fails.
     if isinstance(user_query, str):
-        user_query = json.loads(user_query)
+        try:
+            user_query = json.loads(user_query)
+        except Exception:
+            logger.warning("route_request: failed to parse user_query JSON string")
+            return {"error": "user_query must be a JSON object (dictionary), not a malformed string"}
 
     if isinstance(products, str):
-        products = json.loads(products)
+        try:
+            products = json.loads(products)
+        except Exception:
+            logger.warning("route_request: failed to parse products JSON string")
+            products = None
 
     result = None  
 
