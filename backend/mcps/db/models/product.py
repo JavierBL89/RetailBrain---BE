@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from mcps.db.models import Base
+from .provider import Provider
 
 
 class Product(Base):
@@ -16,6 +17,8 @@ class Product(Base):
     gender = Column(String)
     brand = Column(String)
 
+    provider_id = Column(Integer, ForeignKey('providers.provider_id'))
+
     # Your custom field
     tags_string = Column(String)  # Comma-separated tags
 
@@ -24,3 +27,4 @@ class Product(Base):
 
     variants = relationship("ProductVariant", back_populates="product")
     tags = relationship("ProductTag", back_populates="product")
+    provider = relationship("Provider", back_populates="products")
