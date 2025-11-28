@@ -18,6 +18,12 @@ from mcps.inventory_management.inventory_manager import insert_new_product_sql, 
 from mcps.analytics.data_reports_manager import data_reports_mgr
 from mcps.analytics.data_metrics_manager import data_metrics_mgr
 
+from mcps.db.models.provider import Provider
+from backend.mcps.mailing.mail_providers import mail_providers as send_mail_providers
+
+from mcps.mailing.get_providers import get_providers
+from mcps.mailing.get_providers import get_provider_email
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -53,7 +59,7 @@ def route_request(
         # Insert new product into SQL database
         try:
            new_variants_list = insert_new_product_sql(products or {})
-           variants_metadata = new_variants_list["variants_per_product"]
+           variants_metadata = new_variants_list.get("variants_per_product", {})
         except Exception as e:
           return {"error": f"Failed to insert product into SQL db: {str(e)}"}
         print({"Products added to SQL with ids ": new_variants_list["SQL_inserted_product_ids"]})
@@ -136,7 +142,41 @@ def create_analytics_dashboard(action: str, user_query: Any | None = None):
     ]
         }
 
-    
+
+@mcp.tool()
+def mail_providers_tool(user_query: Any | None = None):   
+    """
+    Contact providers via email.
+    """
+    if isinstance(user_query, str):
+        user_query = json.loads(user_query)
+
+
+
+    user_query = user_query or {}  # Ensure user_query is a dictionary
+    subject = (user_query or {}).get("subject", "No Subject")
+    body = (user_query or {}).get("body", "No Body")
+    to_emails = (user_query or {}).get("to_emails", [])
+
+    result = send_mail_providers(subject, body, to_emails)
+    return {"result": result}
+
+
+@mcp.resources("providers://all")
+def get_all_providers():
+    """
+    Fetch all providers from the database.
+    """
+    return get_providers()
+
+@mcp.resources("provider_email://by_id")
+def get_provider_mail_by_id(provider_id: int):
+    """
+    Fetch a provider email by provider ID.
+    """
+    return get_provider_email(provider_id)
+
+
 # ------------------------------------------------------
 
 chat_memory={} # Dict[str, List[Dict[str, str]]]
