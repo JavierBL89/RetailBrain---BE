@@ -10,13 +10,13 @@ from typing import Any
 
 
 from mcps.orchestrator_mcp.llm.gpt_client import query_gpt_api
-from mcps.product_v_search.main import process_search
-from mcps.product_v_search.main import upsert_products
+# from mcps.product_v_search.main import process_search
+# from mcps.product_v_search.main import upsert_products
 
 
 from mcps.inventory_management.inventory_manager import insert_new_product_sql, get_products_variants_with_images, inventory_manager
 from mcps.analytics.data_reports_manager import data_reports_mgr
-from mcps.analytics.data_metrics_manager import data_metrics_mgr
+# from mcps.analytics.data_metrics_manager import data_metrics_mgr
 
 from mcps.db.models.provider import Provider
 from backend.mcps.mailing.mail_providers import mail_providers as send_mail_providers
@@ -56,15 +56,16 @@ def route_request(
     result = None  
 
     if action == "insert_product":
-        # Insert new product into SQL database
-        try:
-           new_variants_list = insert_new_product_sql(products or {})
-           variants_metadata = new_variants_list.get("variants_per_product", {})
-        except Exception as e:
-          return {"error": f"Failed to insert product into SQL db: {str(e)}"}
-        print({"Products added to SQL with ids ": new_variants_list["SQL_inserted_product_ids"]})
-        print({"Variants added to SQL with ids ": new_variants_list["SQL_inserted_product_variants_ids"]})
-        result = {"Products added to SQL db ": upsert_products(variants_metadata or {})}  ## Product vector db insertion 
+        new_variants_list = insert_new_product_sql(products or {})
+        # # Insert new product into SQL database
+        # try:
+        #    new_variants_list = insert_new_product_sql(products or {})
+        #    variants_metadata = new_variants_list.get("variants_per_product", {})
+        # except Exception as e:
+        #   return {"error": f"Failed to insert product into SQL db: {str(e)}"}
+        # print({"Products added to SQL with ids ": new_variants_list.get("SQL_inserted_product_ids", [])})
+        # print({"Variants added to SQL with ids ": new_variants_list["SQL_inserted_product_variants_ids"]})
+        # # result = {"Products added to SQL db ": upsert_products(variants_metadata or {})}  ## Product vector db insertion 
     
 
     elif action == "delete_variant_by_sku":
@@ -81,11 +82,11 @@ def route_request(
           return {"error": f"Failed to delete product: {str(e)}"} 
         
 
-    elif action == "semantic_products_search":
-        try:
-            result = process_vector_search(conversation_id, user_query or {})
-        except Exception as e:
-            return {"error": f"Failed to process vector search: {str(e)}"}
+    # elif action == "semantic_products_search":
+    #     try:
+    #         result = process_vector_search(conversation_id, user_query or {})
+    #     except Exception as e:
+    #         return {"error": f"Failed to process vector search: {str(e)}"}
     
 
     elif action == "fetch_products":
@@ -162,14 +163,14 @@ def mail_providers_tool(user_query: Any | None = None):
     return {"result": result}
 
 
-@mcp.resources("providers://all")
+@mcp.resource("providers://all")
 def get_all_providers():
     """
     Fetch all providers from the database.
     """
     return get_providers()
 
-@mcp.resources("provider_email://by_id")
+@mcp.resource("provider_email://by_id/{provider_id}")
 def get_provider_mail_by_id(provider_id: int):
     """
     Fetch a provider email by provider ID.
@@ -200,16 +201,16 @@ def process_vector_search(conversation_id:str, user_query: dict):
         llm_response = "Sorry, something went wrong."
  
 
-    if isinstance(llm_response, dict) and llm_response.get("structured_data"):
-        # convert string to dict and build the embedded document
-        try:
-            structured_query = llm_response["structured_data"]
-            print("Structured Query Extracted:", structured_query)
-            #print(process_search(structured_query))
-            return process_search(structured_query)
+    # if isinstance(llm_response, dict) and llm_response.get("structured_data"):
+    #     # convert string to dict and build the embedded document
+    #     try:
+    #         structured_query = llm_response.get("structured_data") if isinstance(llm_response, dict) else None
+    #         print("Structured Query Extracted:", structured_query)
+    #         #print(process_search(structured_query))
+    #         return process_search(structured_query)
 
-        except json.JSONDecodeError:
-            print("❌ Could not parse structured query:", structured_query)
+    #     except json.JSONDecodeError:
+    #         print("❌ Could not parse structured query:", structured_query)
     
     # Extract Assistant action if present
     assistant_text = llm_response if isinstance(llm_response, str) else llm_response.get("user_text", str(llm_response))
