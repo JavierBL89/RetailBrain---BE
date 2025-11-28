@@ -10,8 +10,6 @@ COPY mcps/orchestrator_mcp/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 
-COPY static/prompts /app/static/prompts
-
 # Copy the rest of the code *only for production builds*
 # (in dev, your docker-compose volume will mount the code instead)
 COPY . .
