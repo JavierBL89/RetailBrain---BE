@@ -5,6 +5,34 @@ from pathlib import Path
 
 from mcps.db.init_db import get_db_connection
 
+
+def inventory_manager(user_query: list | dict = None, action: str = None) -> dict:
+
+    if isinstance(user_query, str):
+        import json
+        user_query =[user_query]
+
+    if action == "delete_variant_by_sku":
+        return delete_variants_by_sku_sql(user_query)
+    if action == "delete_product_by_id":
+        return delete_products_by_id_sql(user_query)
+    
+
+    """
+    Returns basic info about the inventory manager module.
+    """
+
+    return {
+        "module": "inventory_manager",
+        "description": "Module for managing product inventory in SQL database.",
+        "functions": [
+            "insert_new_product_sql",
+            "update_products_sql",
+            "delete_products_by_id_sql",
+            "fetch_products_by_product_id_sql",
+            "get_products_variants_with_images"
+        ]
+    }
 def insert_new_product_sql(products_data: dict | list ) -> list:
     """
     Accepts either:
@@ -80,7 +108,7 @@ def insert_new_product_sql(products_data: dict | list ) -> list:
                         variant["variant_sku"],
                         variant["name"],
                         variant["description"],
-                        variant["category"],
+                        product_data["category"],
                         variant["color"],
                         variant["material"],
                         variant["gender"],
@@ -113,17 +141,18 @@ def insert_new_product_sql(products_data: dict | list ) -> list:
                         ))
 
                         # 5. store variant metadata to pass to vector DB
+                        meta = variant.get("metadata", {})
                         variant_metadata = {
                             "variant_id": variant_id,
                             "brand": variant.get("brand"),
-                            "category": variant.get("category"),
+                            "category": p.get("category"),  # product-level category
                             "color": variant.get("color"),
                             "material": variant.get("material"),
-                            "price":variant.get("price"),
-                            "heel_type": variant.get("metadata").get("heel_type"),
-                            "heel_height": variant.get("metadata").variant.get("heel_height"),
-                            "tags_string": variant.get("metadata").variant.get("tags_string"),
-                            "occasion": variant.get("metadata").variant.get("occasion")
+                            "price": variant.get("price"),
+                            "heel_type": meta.get("heel_type"),
+                            "heel_height": meta.get("heel_height"),
+                            "tags_string": variant.get("tags_string"),
+                            "occasion": meta.get("occasion")
                             }                       
                      
                 # push variant to list for return
@@ -143,7 +172,6 @@ def insert_new_product_sql(products_data: dict | list ) -> list:
         "SQL_inserted_product_variants_ids": inserted_variant_ids,
         "variants_per_product": variants_metadata_list
     }
-
 
 
 def update_products_sql(products_data: list, mode: str = "patch") -> dict:
@@ -289,7 +317,6 @@ def update_products_sql(products_data: list, mode: str = "patch") -> dict:
     return {"status": "success"}
 
 
-
 def delete_products_by_id_sql(delete_request: dict) -> dict:
     """
     Delete products, variants, sizes, and variant-size relations based on provided IDs.
@@ -373,8 +400,45 @@ def delete_products_by_id_sql(delete_request: dict) -> dict:
         "deleted_variant_sizes": deleted_variant_sizes
     }
 
+def delete_variants_by_sku_sql(delete_request: dict | list) -> dict:
+    """
+    Delete products and their variants based on provided SKUs.
+    """
+    db_conn = get_db_connection()
 
-def fetch_products_by_product_id_sql(product_ids):
+    deleted_variants = []
+    try:
+        with db_conn.cursor() as cur:
+
+            # -------------------------
+            # Delete variants
+            # -------------------------
+            for vid in delete_request.get("variant_skus", []):
+                cur.execute("""
+                    DELETE FROM product_variants
+                    WHERE variant_sku = %s
+                    RETURNING variant_sku;
+                """, (vid,))
+                result = cur.fetchone()
+                if result:
+                    deleted_variants.append(result[0])
+
+        db_conn.commit()
+
+    except Exception as e:
+        db_conn.rollback()
+        return {"status": "error", "message": str(e)}
+
+    finally:
+        db_conn.close()
+
+    return {
+        "status": "success",
+        "deleted_variants": deleted_variants,
+    }
+
+
+def fetch_variants_by_variant_id_sql(product_ids):
     """
     Fetch product details from the SQL database based on a list of product product_ids.
     """
@@ -393,7 +457,7 @@ def fetch_products_by_product_id_sql(product_ids):
     query = f"""
         SELECT 
             v.variant_id,
-            v.product_id
+            v.product_id,
             v.variant_sku,
             v.name,
             v.description,

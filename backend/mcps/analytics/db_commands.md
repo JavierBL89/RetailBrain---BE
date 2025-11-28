@@ -14,13 +14,7 @@
     80% single-item purchases, 15% two items, 5% three items
     Black Friday discounts (10-20% off in mid-November)
     Multiple payment methods and locations across 27 US cities
-**Business Intelligence Ready:**
-    Top selling products analysis
-    Revenue trends by month
-    Average order value tracking
-    Customer location patterns
-    Payment method preferences
-    Seasonal sales patterns
+
 
 
 ## 🔍 Essential Query Commands

@@ -38,6 +38,7 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app/backend  # Mount the backend code for access to all modules
+      - ./backend/static/prompts:/app/static/prompts
       
   n8n:
     image: n8nio/n8n
