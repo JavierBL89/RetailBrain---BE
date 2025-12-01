@@ -38,19 +38,13 @@ mcp = FastMCP("orchestrator")
 # ------------------------------------------------------
 # Tools
 # ------------------------------------------------------
-@mcp.tool
-def route_request(
+@mcp.tool()
+def inventory_management( 
     action: str, 
     arguments:str| None= None, 
-    products: Any | None = None,
-    user_query: Any | None = None,
-    conversation_id: str | None = None): 
-    """
-    Route incoming requests to appropriate handlers based on action name.
-    """  
-
-    if isinstance(user_query, str):
-        user_query = json.loads(user_query)
+     user_query: Any | None = None,
+    products: Any | None = None):
+     
 
     if isinstance(products, str):
         products = json.loads(products)
@@ -65,7 +59,7 @@ def route_request(
         #   return {"error": f"Failed to insert product into SQL db: {str(e)}"}
         # print({"Products added to SQL with ids ": new_variants_list["SQL_inserted_product_ids"]})
         # print({"Variants added to SQL with ids ": new_variants_list["SQL_inserted_product_variants_ids"]})
-        # #result = {"message": "Insert product not implemented"}
+        result = {"message": "Insert product not implemented"}
         # result = {"Products added to SQL db ": upsert_products(variants_metadata or {})}  ## Product vector db insertion 
     
     elif action == "delete_variant_by_sku":
@@ -79,25 +73,14 @@ def route_request(
            result = inventory_manager(user_query or {})
         except Exception as e:
           return {"error": f"Failed to delete product: {str(e)}"} 
+        
     elif action == "fetch_products":
         try:
             return get_products_variants_with_images()
         except Exception as e:
             return {"error": f"Failed to fetch products and variants: {str(e)}"}
-
-    elif action == "report":
-        try:
-            result = data_reports_mgr(user_query or {})
-        except Exception as e:
-            return {"error": f"Failed to process data report: {str(e)}"}
-    elif action == "health":
-        result= health()
-    elif action == "echo":
-        message = arguments.get("message", "")
-        result= echo(message)
     else:
         return {"error": f"Unknown action: {action}"}
-
 
     text_output = json.dumps(result, indent=2) # Serialize to pretty JSON
     # Claude MCP-compatible content block format
@@ -132,6 +115,37 @@ def semantic_product_search(
             }
         ]
     }
+
+
+@mcp.tool
+def analytics_operations(
+    action: str, 
+    arguments:str| None= None, 
+    user_query: Any | None = None): 
+    """
+    Route incoming requests to appropriate handlers based on action name.
+    """  
+
+    if isinstance(user_query, str):
+        user_query = json.loads(user_query)
+
+    if action == "report":
+        try:
+            result = data_reports_mgr(user_query or {})
+        except Exception as e:
+            return {"error": f"Failed to process data report: {str(e)}"}
+        
+    text_output = json.dumps(result, indent=2) # Serialize to pretty JSON
+    # Claude MCP-compatible content block format
+    return {
+        "content": [
+            {
+                "type": "text",
+                "text": text_output
+            }
+        ]
+    }
+
 
 
 @mcp.tool()

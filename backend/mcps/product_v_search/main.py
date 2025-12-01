@@ -5,7 +5,7 @@ import chromadb
 import sys
 import ast
 
-ROOT = Path(__file__).resolve().parents[2]  # <-- likely correct
+ROOT = Path(__file__).resolve().parents[2]
 print("ROOT:", ROOT)
 sys.path.append(str(ROOT))
 
@@ -13,15 +13,16 @@ from mcps.product_v_search.embedding_client import embedding_client
 from mcps.product_v_search.llm.gpt_client import products_ranker, trim_output_helper
 
 from mcps.product_v_search.embedding_client import embedding_client
-from mcps.db.init_db import get_db_connection
 
 # Get directory of THIS file (absolute)
 BASE_DIR = Path(__file__).resolve().parent
-# Always place DB insvariant_ide product_v_search/chroma_db
+
 PERSIST_DIR = BASE_DIR / "chroma_db"
 client = chromadb.PersistentClient(path=str(PERSIST_DIR)) ## creates database
 collection = client.get_or_create_collection("products_db",    ## creates colleltion if not exists
                                    metadata={"hnsw:space": "cosine"})  # recommended for text embeddings
+
+
 
 # ------------------------------------------------------
 # MODULE FUNCTIONS
@@ -289,221 +290,202 @@ def delete_all_products():
 
 if __name__ == "__main__":
 
-    #collection = client.get_collection("products_db")
-    #results = collection.get()
-    # print("Existing Products in Collection:", results)
-   # product =    {
-    #    "product_variant_id": "9",
-    #    "metadata": {
-    #        "brand": "Aldo",
-    #        "category": "Shoes",
-    #        "color": "Black",
-   #         "material": "Synthetic Leather",
-   #         "heel-type": "wedge",
-   #         "heel-height": "medium",
-   #         "sole_type": "platform",
-    #        "tags_string": "black wedge,mary jane style,ankle strap,synthetic leather,casual wear,dress shoes,platform wedge,comfortable heel,aldo,women's shoes"
-    #    }
-   #}
-    #upsert_product(product)
 
-    products_list = [
-    {
-        "variant_id": "9",
-        "metadata": {
-            "brand": "Aldo",
-            "category": "Shoes",
-            "color": "Black",
-            "material": "Synthetic Leather",
-            "heel-type": "wedge",
-            "heel-height": "medium",
-            "tags_string": "black wedge, mary jane style, ankle strap, synthetic leather, casual wear, dress shoes, platform wedge, comfortable heel, aldo, women's shoes",
-            "occasion": "casual wear, dress shoes, work, office"
-        }
-    },
-    {
-        "variant_id": "10",
-        "metadata": {
-            "brand": "Aldo",
-            "category": "Shoes",
-            "color": "Black",
-            "material": "Synthetic Leather",
-            "heel-type": "block",
-            "heel-height": "medium",
-            "tags_string": "black patent leather, mary jane style, block heel, ankle strap, synthetic leather, casual wear, dress shoes, formal wear, glossy finish, aldo, women's shoes, low-heel, medium-heel",
-            "occasion": "casual wear, dress shoes, formal wear"
-        }
-    },
-    {
-        "variant_id": "11",
-        "metadata": {
-            "brand": "Clarks",
-            "category": "Shoes",
-            "color": "Red",
-            "material": "Leather",
-            "heel-type": "stiletto",
-            "heel-height": "high",
-            "tags_string": "red peep toe, studded heels, stiletto heel, leather, formal wear, special occasion, dress shoes, statement heels, high-heel, clark, women's shoes",
-            "occasion": "formal wear, special occasion, dress shoes"
-        }
-    },
-    {
-        "variant_id": "12",
-        "metadata": {
-            "brand": "Clarks",
-            "category": "Boot",
-            "color": "Black",
-            "material": "Synthetic Leather",
-            "heel-type": "stiletto",
-            "heel-height": "high",
-            "tags_string": "black ankle boot, high heel boot, synthetic leather, formal wear, stiletto heel, platform boot, side zipper, dress boots, clarks, women's boots",
-            "occasion": "formal wear, dress boots"
-        }
-    },
-    {
-        "variant_id": "13",
-        "metadata": {
-            "brand": "Aldo",
-            "category": "Platform-Shoes",
-            "color": "Black",
-            "material": "Suede",
-            "heel-type": "stiletto",
-            "heel-height": "high",
-            "tags_string": "black platform heels, synthetic suede, stiletto heel, platform pumps, formal wear, dress shoes, high heel, slip-on, aldo, women's platform shoes",
-            "occasion": "formal wear, dress shoes, casual wear"
-        }
-    },
-    {
-        "variant_id": "14",
-        "metadata": {
-            "brand": "Clarks",
-            "category": "Sandals",
-            "color": "Orange",
-            "material": "Synthetic Leather",
-            "heel-type": "stiletto",
-            "heel-height": "high",
-            "tags_string": "orange platform sandal, strappy heels, synthetic leather, stiletto heel, dress shoes, special occasion, party heels, high heel sandal, clarks, women's platform sandals",
-            "occasion": "dress shoes, special occasion, party, celebration, event"
-        }
-    },
-    {
-        "variant_id": "15",
-        "metadata": {
-            "brand": "Clarks",
-            "category": "Shoes",
-            "color": "Red",
-            "material": "Synthetic",
-            "heel-type": "stiletto",
-            "heel-height": "high",
-            "tags_string": "red peep toe, embellished heels, synthetic leather, stiletto heel, high-heel, special occasion, dress shoes, party heels, studded toe, clarks, women's heels",
-            "occasion": "special occasion, dress shoes, party, celebration, event"
-        }
-    },
-    {
-        "variant_id": "16",
-        "metadata": {
-            "brand": "Aldo",
-            "category": "Shoes",
-            "color": "Red",
-            "material": "Synthetic Leather",
-            "heel-type": "wedge",
-            "heel-height": "low",
-            "tags_string": "brown wedge, mary jane style, ankle strap, synthetic leather, aldo, platform, casual wear, dress shoes, platform wedge, low-heel, comfortable heel, aldo, women's shoes",
-            "occasion": "casual wear, dress shoes"
-        }
-    },
-    {
-        "variant_id": "17",
-        "metadata": {
-            "brand": "Zara",
-            "category": "Sandals",
-            "color": "Black",
-            "material": "Synthetic",
-            "heel-type": "block",
-            "heel-height": "medium",
-            "tags_string": "black studded sandal, clear strap heels, transparent straps, synthetic leather, special occasion, dress shoes, party, medium-heels, block heel, zara, women's sandals",
-            "occasion": "special occasion, dress shoes, party, celebration, event"
-        }
-    },
-    {
-        "variant_id": "18",
-        "metadata": {
-            "brand": "Zara",
-            "category": "Sandals",
-            "color": "Gold",
-            "material": "Synthetic",
-            "heel-type": "wedge",
-            "heel-height": "low",
-            "tags_string": "gold wedge sandal, clear straps, transparent heels, synthetic leather, special occasion, dress shoes, low-heel, party heels, minimalist design, zara, women's wedge sandals",
-            "occasion": "special occasion, dress shoes, party, celebration, event"
-        }
-    },
-    {
-        "variant_id": "20",
-        "metadata": {
-            "brand": "Aldo",
-            "category": "Comfort-Sandals",
-            "color": "Black",
-            "material": "Synthetic",
-            "heel-type": "flat",
-            "heel-height": "low",
-            "tags_string": "comfort sandals, walking shoes, adjustable straps, black, synthetic leather, casual wear, velcro straps, cushioned footbed, everyday comfort, aldo, women's comfort shoes",
-            "occasion": "casual wear, everyday comfort"
-        }
-    },
-    {
-        "variant_id": "19",
-        "metadata": {
-            "brand": "Aldo",
-            "category": "Sandals",
-            "color": "Beige",
-            "material": "Synthetic",
-            "heel-type": "flat",
-            "heel-height": "low",
-            "tags_string": "comfort sandals, walking shoes, adjustable straps, beige, synthetic leather, casual wear, velcro straps, cushioned footbed, everyday comfort, aldo, women's comfort shoes",
-            "occasion": "casual wear, everyday comfort"
-        }
-    },
-    {
-        "variant_id": "22",
-        "metadata": {
-            "brand": "Aldo",
-            "category": "Boots",
-            "color": "Black",
-            "material": "Synthetic Leather",
-            "heel-type": "flat",
-            "heel-height": "low",
-            "tags_string": "black riding boot, low heel boot, synthetic leather, casual wear, everyday comfort, knee-high boot, side zipper, equestrian style, aldo, women's boots",
-            "occasion": "casual wear, everyday comfort"
-        }
-    },
-    {
-        "variant_id": "23",
-        "metadata": {
-            "brand": "Aldo",
-            "category": "Boots",
-            "color": "Cognac",
-            "material": "Synthetic Leather",
-            "heel-type": "block",
-            "heel-height": "medium",
-            "tags_string": "cognac riding boot, low heel boot, synthetic leather, casual wear, everyday comfort, knee-high boot, zipper, equestrian style, aldo, women's boots",
-            "occasion": "casual wear, everyday comfort"
-        }
-    },
-    {
-        "variant_id": "21",
-        "metadata": {
-            "brand": "Zara",
-            "category": "Boots",
-            "color": "Brown",
-            "material": "Synthetic Leather",
-            "heel-type": "stiletto",
-            "heel-height": "high",
-            "tags_string": "brown knee-high boot, block heel, synthetic leather, dress boots, casual wear, high top boot, zipper, fashion boots, zara, women's boots",
-            "occasion": "casual wear, dress boots"
-        }
-    }
-]
-
-
-    upsert_products(products_list)
+#     products_list = [
+#     {
+#         "variant_id": "9",
+#         "metadata": {
+#             "brand": "Aldo",
+#             "category": "Shoes",
+#             "color": "Black",
+#             "material": "Synthetic Leather",
+#             "heel-type": "wedge",
+#             "heel-height": "medium",
+#             "tags_string": "black wedge, mary jane style, ankle strap, synthetic leather, casual wear, dress shoes, platform wedge, comfortable heel, aldo, women's shoes",
+#             "occasion": "casual wear, dress shoes, work, office"
+#         }
+#     },
+#     {
+#         "variant_id": "10",
+#         "metadata": {
+#             "brand": "Aldo",
+#             "category": "Shoes",
+#             "color": "Black",
+#             "material": "Synthetic Leather",
+#             "heel-type": "block",
+#             "heel-height": "medium",
+#             "tags_string": "black patent leather, mary jane style, block heel, ankle strap, synthetic leather, casual wear, dress shoes, formal wear, glossy finish, aldo, women's shoes, low-heel, medium-heel",
+#             "occasion": "casual wear, dress shoes, formal wear"
+#         }
+#     },
+#     {
+#         "variant_id": "11",
+#         "metadata": {
+#             "brand": "Clarks",
+#             "category": "Shoes",
+#             "color": "Red",
+#             "material": "Leather",
+#             "heel-type": "stiletto",
+#             "heel-height": "high",
+#             "tags_string": "red peep toe, studded heels, stiletto heel, leather, formal wear, special occasion, dress shoes, statement heels, high-heel, clark, women's shoes",
+#             "occasion": "formal wear, special occasion, dress shoes"
+#         }
+#     },
+#     {
+#         "variant_id": "12",
+#         "metadata": {
+#             "brand": "Clarks",
+#             "category": "Boot",
+#             "color": "Black",
+#             "material": "Synthetic Leather",
+#             "heel-type": "stiletto",
+#             "heel-height": "high",
+#             "tags_string": "black ankle boot, high heel boot, synthetic leather, formal wear, stiletto heel, platform boot, side zipper, dress boots, clarks, women's boots",
+#             "occasion": "formal wear, dress boots"
+#         }
+#     },
+#     {
+#         "variant_id": "13",
+#         "metadata": {
+#             "brand": "Aldo",
+#             "category": "Platform-Shoes",
+#             "color": "Black",
+#             "material": "Suede",
+#             "heel-type": "stiletto",
+#             "heel-height": "high",
+#             "tags_string": "black platform heels, synthetic suede, stiletto heel, platform pumps, formal wear, dress shoes, high heel, slip-on, aldo, women's platform shoes",
+#             "occasion": "formal wear, dress shoes, casual wear"
+#         }
+#     },
+#     {
+#         "variant_id": "14",
+#         "metadata": {
+#             "brand": "Clarks",
+#             "category": "Sandals",
+#             "color": "Orange",
+#             "material": "Synthetic Leather",
+#             "heel-type": "stiletto",
+#             "heel-height": "high",
+#             "tags_string": "orange platform sandal, strappy heels, synthetic leather, stiletto heel, dress shoes, special occasion, party heels, high heel sandal, clarks, women's platform sandals",
+#             "occasion": "dress shoes, special occasion, party, celebration, event"
+#         }
+#     },
+#     {
+#         "variant_id": "15",
+#         "metadata": {
+#             "brand": "Clarks",
+#             "category": "Shoes",
+#             "color": "Red",
+#             "material": "Synthetic",
+#             "heel-type": "stiletto",
+#             "heel-height": "high",
+#             "tags_string": "red peep toe, embellished heels, synthetic leather, stiletto heel, high-heel, special occasion, dress shoes, party heels, studded toe, clarks, women's heels",
+#             "occasion": "special occasion, dress shoes, party, celebration, event"
+#         }
+#     },
+#     {
+#         "variant_id": "16",
+#         "metadata": {
+#             "brand": "Aldo",
+#             "category": "Shoes",
+#             "color": "Red",
+#             "material": "Synthetic Leather",
+#             "heel-type": "wedge",
+#             "heel-height": "low",
+#             "tags_string": "brown wedge, mary jane style, ankle strap, synthetic leather, aldo, platform, casual wear, dress shoes, platform wedge, low-heel, comfortable heel, aldo, women's shoes",
+#             "occasion": "casual wear, dress shoes"
+#         }
+#     },
+#     {
+#         "variant_id": "17",
+#         "metadata": {
+#             "brand": "Zara",
+#             "category": "Sandals",
+#             "color": "Black",
+#             "material": "Synthetic",
+#             "heel-type": "block",
+#             "heel-height": "medium",
+#             "tags_string": "black studded sandal, clear strap heels, transparent straps, synthetic leather, special occasion, dress shoes, party, medium-heels, block heel, zara, women's sandals",
+#             "occasion": "special occasion, dress shoes, party, celebration, event"
+#         }
+#     },
+#     {
+#         "variant_id": "18",
+#         "metadata": {
+#             "brand": "Zara",
+#             "category": "Sandals",
+#             "color": "Gold",
+#             "material": "Synthetic",
+#             "heel-type": "wedge",
+#             "heel-height": "low",
+#             "tags_string": "gold wedge sandal, clear straps, transparent heels, synthetic leather, special occasion, dress shoes, low-heel, party heels, minimalist design, zara, women's wedge sandals",
+#             "occasion": "special occasion, dress shoes, party, celebration, event"
+#         }
+#     },
+#     {
+#         "variant_id": "20",
+#         "metadata": {
+#             "brand": "Aldo",
+#             "category": "Comfort-Sandals",
+#             "color": "Black",
+#             "material": "Synthetic",
+#             "heel-type": "flat",
+#             "heel-height": "low",
+#             "tags_string": "comfort sandals, walking shoes, adjustable straps, black, synthetic leather, casual wear, velcro straps, cushioned footbed, everyday comfort, aldo, women's comfort shoes",
+#             "occasion": "casual wear, everyday comfort"
+#         }
+#     },
+#     {
+#         "variant_id": "19",
+#         "metadata": {
+#             "brand": "Aldo",
+#             "category": "Sandals",
+#             "color": "Beige",
+#             "material": "Synthetic",
+#             "heel-type": "flat",
+#             "heel-height": "low",
+#             "tags_string": "comfort sandals, walking shoes, adjustable straps, beige, synthetic leather, casual wear, velcro straps, cushioned footbed, everyday comfort, aldo, women's comfort shoes",
+#             "occasion": "casual wear, everyday comfort"
+#         }
+#     },
+#     {
+#         "variant_id": "22",
+#         "metadata": {
+#             "brand": "Aldo",
+#             "category": "Boots",
+#             "color": "Black",
+#             "material": "Synthetic Leather",
+#             "heel-type": "flat",
+#             "heel-height": "low",
+#             "tags_string": "black riding boot, low heel boot, synthetic leather, casual wear, everyday comfort, knee-high boot, side zipper, equestrian style, aldo, women's boots",
+#             "occasion": "casual wear, everyday comfort"
+#         }
+#     },
+#     {
+#         "variant_id": "23",
+#         "metadata": {
+#             "brand": "Aldo",
+#             "category": "Boots",
+#             "color": "Cognac",
+#             "material": "Synthetic Leather",
+#             "heel-type": "block",
+#             "heel-height": "medium",
+#             "tags_string": "cognac riding boot, low heel boot, synthetic leather, casual wear, everyday comfort, knee-high boot, zipper, equestrian style, aldo, women's boots",
+#             "occasion": "casual wear, everyday comfort"
+#         }
+#     },
+#     {
+#         "variant_id": "21",
+#         "metadata": {
+#             "brand": "Zara",
+#             "category": "Boots",
+#             "color": "Brown",
+#             "material": "Synthetic Leather",
+#             "heel-type": "stiletto",
+#             "heel-height": "high",
+#             "tags_string": "brown knee-high boot, block heel, synthetic leather, dress boots, casual wear, high top boot, zipper, fashion boots, zara, women's boots",
+#             "occasion": "casual wear, dress boots"
+#         }
+#     }
+# ]
+#     upsert_products(products_list)
