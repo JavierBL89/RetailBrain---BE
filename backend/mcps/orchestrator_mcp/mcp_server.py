@@ -1,5 +1,10 @@
 import sys, builtins, logging
 
+# silence stdout BEFORE anything else can run
+logging.basicConfig(stream=sys.stderr)
+_builtin_print = print
+def print(*a, **k): _builtin_print(*a, file=sys.stderr, **k)
+builtins.print = print
 
 from fastmcp import FastMCP
 import sys, os, builtins
@@ -10,19 +15,16 @@ from typing import Any
 
 
 from mcps.orchestrator_mcp.llm.gpt_client import query_gpt_api
-# from mcps.product_v_search.main import process_search
-# from mcps.product_v_search.main import upsert_products
+from mcps.product_v_search.main import process_search
+from mcps.product_v_search.main import upsert_products
 
 
-from mcps.inventory_management.inventory_manager import insert_new_product_sql, get_products_variants_with_images, inventory_manager
+from mcps.inventory_management.inventory_manager import insert_new_product_sql, get_products_variants_with_images, inventory_manager, fetch_variants_by_variant_id_sql
 from mcps.analytics.data_reports_manager import data_reports_mgr
-# from mcps.analytics.data_metrics_manager import data_metrics_mgr
 
 from mcps.db.models.provider import Provider
-from backend.mcps.mailing.mail_providers import mail_providers as send_mail_providers
-
-from mcps.mailing.get_providers import get_providers
-from mcps.mailing.get_providers import get_provider_email
+#from mcps.supplier_management.mail_providers import mail_providers as send_mail_providers
+#from mcps.supplier_management.get_providers import get_providers, get_provider_email
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -55,54 +57,39 @@ def route_request(
 
     result = None  
 
-    if action == "insert_product":
+    if action == "insert_product":        # Insert new product into SQL database
+        #try:
         new_variants_list = insert_new_product_sql(products or {})
-        # # Insert new product into SQL database
-        # try:
-        #    new_variants_list = insert_new_product_sql(products or {})
-        #    variants_metadata = new_variants_list.get("variants_per_product", {})
+        #    variants_metadata = new_variants_list["variants_per_product"]
         # except Exception as e:
         #   return {"error": f"Failed to insert product into SQL db: {str(e)}"}
-        # print({"Products added to SQL with ids ": new_variants_list.get("SQL_inserted_product_ids", [])})
+        # print({"Products added to SQL with ids ": new_variants_list["SQL_inserted_product_ids"]})
         # print({"Variants added to SQL with ids ": new_variants_list["SQL_inserted_product_variants_ids"]})
-        # # result = {"Products added to SQL db ": upsert_products(variants_metadata or {})}  ## Product vector db insertion 
+        # #result = {"message": "Insert product not implemented"}
+        # result = {"Products added to SQL db ": upsert_products(variants_metadata or {})}  ## Product vector db insertion 
     
-
     elif action == "delete_variant_by_sku":
         try:
            result = inventory_manager(user_query or {}, action)
         except Exception as e:
           return {"error": f"Failed to delete product variant: {str(e)}"} 
         
-
     elif action == "delete_product_by_id":
         try:
            result = inventory_manager(user_query or {})
         except Exception as e:
           return {"error": f"Failed to delete product: {str(e)}"} 
-        
-
-    # elif action == "semantic_products_search":
-    #     try:
-    #         result = process_vector_search(conversation_id, user_query or {})
-    #     except Exception as e:
-    #         return {"error": f"Failed to process vector search: {str(e)}"}
-    
-
     elif action == "fetch_products":
         try:
             return get_products_variants_with_images()
         except Exception as e:
             return {"error": f"Failed to fetch products and variants: {str(e)}"}
- 
 
     elif action == "report":
         try:
             result = data_reports_mgr(user_query or {})
         except Exception as e:
             return {"error": f"Failed to process data report: {str(e)}"}
-        
-
     elif action == "health":
         result= health()
     elif action == "echo":
@@ -114,6 +101,29 @@ def route_request(
 
     text_output = json.dumps(result, indent=2) # Serialize to pretty JSON
     # Claude MCP-compatible content block format
+    return {
+        "content": [
+            {
+                "type": "text",
+                "text": text_output
+            }
+        ]
+    }
+
+
+@mcp.tool()
+def semantic_product_search( 
+    user_query: Any | None = None,
+    conversation_id: str | None = None): 
+
+    try:
+        result = process_vector_search(conversation_id, user_query or {})
+
+    except Exception as e:
+        return {"error": f"Failed to process vector search: {str(e)}"}
+    
+    text_output = json.dumps(result, indent=2) # Serialize to pretty JSON
+        # Claude MCP-compatible content block format
     return {
         "content": [
             {
@@ -200,17 +210,45 @@ def process_vector_search(conversation_id:str, user_query: dict):
     if llm_response is None:
         llm_response = "Sorry, something went wrong."
  
+    if isinstance(llm_response, dict) and llm_response.get("structured_data"):
+        # do vector search..
+        try:
+            structured_query = llm_response["structured_data"]  
+            print("Structured Query Extracted from Chatbot:", structured_query)
+        except json.JSONDecodeError:
+            print("❌ Could not parse structured query:", structured_query)
 
-    # if isinstance(llm_response, dict) and llm_response.get("structured_data"):
-    #     # convert string to dict and build the embedded document
-    #     try:
-    #         structured_query = llm_response.get("structured_data") if isinstance(llm_response, dict) else None
-    #         print("Structured Query Extracted:", structured_query)
-    #         #print(process_search(structured_query))
-    #         return process_search(structured_query)
+        matched_results = process_search(structured_query)
+        # return products from sql
+        print("Matched results", matched_results)
+        fetched_variants = fetch_variants_by_variant_id_sql(matched_results["variant_ids_ranked"])
+        
+        summary = []
+        # create a map (fast lookup)
+        reasons_by_id = {
+            item["variant_id"]: item.get("reason", "") for item in matched_results["ranked_list"]
+        }
+        # build a summary object to provide search context to chatbot
+        for v in fetched_variants["variants"]:
+            item = {
+                "variant_id": v["variant_id"],
+                "name": v["name"],
+                "tags_string": v["tags_string"],
+                "price": v["price"],
+                "reason": reasons_by_id.get(v["variant_id"], None)
+            }
+            summary.append(item)
 
-    #     except json.JSONDecodeError:
-    #         print("❌ Could not parse structured query:", structured_query)
+        # Convert to JSON string (LLM-safe formatting)
+        json_summary = json.dumps(summary)
+        # Save LLM response to conversation history
+        chat_memory[conversation_id].append({
+            "role": "system", 
+            "content": f"Be aware of the search results populated to user: <search_results>{json_summary}</search_results>. Provide short answer with some of the matching criteria"})
+        llm_response = query_gpt_api(chat_memory[conversation_id])
+        return {"llm_response": llm_response,
+                "fetched_results": fetched_variants,
+                }
     
     # Extract Assistant action if present
     assistant_text = llm_response if isinstance(llm_response, str) else llm_response.get("user_text", str(llm_response))
@@ -218,7 +256,9 @@ def process_vector_search(conversation_id:str, user_query: dict):
     # Save LLM response to conversation history
     chat_memory[conversation_id].append({"role": "assistant", "content": assistant_text})
     # Save last message to session for state persistence
-    return {"result": llm_response}
+    return {"llm_response": llm_response,
+            "fetched_results": [],
+            }
 
 
 # ------------------------------------------------------

@@ -1,35 +1,38 @@
 
 -- =========================================    
--- ========== PROVIDERS ==========
--- =========================================    
-INSERT INTO providers (provider_id, name, description, email)
-VALUES
-    (1, 'Aldo', 'Leading global footwear and accessories brand.', 'contact@aldo.com'),
-    (2, 'Clarks', 'Renowned for quality and comfort in shoes.', 'info@clarks.com'),
-    (3, 'Zara', 'Fashion-forward retailer with a wide range of shoes and accessories.', 'support@zara.com')
-ON CONFLICT (provider_id) DO NOTHING;
-
-
--- =========================================    
 -- ========== PRODUCTS ==========
 -- =========================================    
 INSERT INTO products (product_id, sku, category, brand)
 VALUES
-    (9, 'MJWEDGE', 'Shoes', 'Aldo', 1),
-    (10, 'MJPATENT', 'Shoes', 'Aldo', 1),
-    (11, 'PEEPSTUD', 'Shoes', 'Clarks', 2),
-    (12, 'ANKLBOOT', 'Boot', 'Clarks', 2),
-    (13, 'METSUEDE', 'Shoes', 'Aldo', 1),
-    (14, 'PLATSANDL', 'Sandals', 'Aldo', 1),
-    (15, 'EMBPEEP', 'Shoes', 'Clarks', 2),
-    (16, 'MJWEDGE', 'Shoes', 'Clarks', 2),
-    (17, 'STUDCLR', 'Sandals', 'Aldo', 1),
-    (18, 'CLRWEDGE', 'Sandals', 'Zara', 3),
-    (19, 'COMF3-BEI', 'Sandals', 'Zara', 3),
-    (20, 'COMF3', 'Comfort Sandals', 'Aldo', 1),
-    (21, 'HTBOOT', 'Boots', 'Zara', 3),
-    (22, 'RIDING', 'Boots', 'Aldo', 1),
-    (23, 'RIDING', 'Boots', 'Aldo', 1)
+(9, 'MJWEDGE', 'Shoes', 'Aldo', 'Women'),
+
+(10, 'MJPATENT', 'Shoes', 'Aldo', 'Women'),
+
+(11, 'PEEPSTUD','Shoes', 'Clarks', 'Women'),
+
+(12, 'ANKLBOOT','Boot', 'Clarks', 'Women'),
+
+(13, 'METSUEDE' ,'Shoes', 'Aldo', 'Women'),
+
+(14, 'PLATSANDL','Sandals', 'Aldo', 'Women'),
+
+(15, 'EMBPEEP','Shoes', 'Clarks', 'Women'),
+
+(16, 'MJWEDGE', 'Shoes', 'Clarks', 'Women'),
+
+(17, 'STUDCLR','Sandals', 'Aldo', 'Women'),
+
+(18, 'CLRWEDGE', 'Sandals', 'Zara', 'Women'),
+
+(19, 'COMF3-BEI', 'Sandals', 'Zara', 'Women'),
+
+(20, 'COMF3','Comfort Sandals', 'Aldo', 'Women'),
+
+(21, 'HTBOOT','Boots', 'Zara', 'Women'),
+
+(22, 'RIDING', 'Boots', 'Aldo', 'Women'),
+
+(23, 'RIDING', 'Boots', 'Aldo', 'Women')
 ON CONFLICT (product_id) DO NOTHING;
 
 -- =========================================    
@@ -113,6 +116,9 @@ VALUES
  'cognac riding boot, granate riding boot, granate, low heel boot, synthetic leather, casual wear, everyday comfort, knee-high boot, side zipper, equestrian style, aldo, women''s boots')
 ON CONFLICT (variant_id) DO NOTHING;
 
+-- =========================================    
+-- ========== SIZES ==========
+-- =========================================    
 INSERT INTO sizes (size_label)
 VALUES ('36'),('37'),('38'),('39'),('40'),('41')
 ON CONFLICT (size_label) DO NOTHING;
@@ -120,6 +126,9 @@ ON CONFLICT (size_label) DO NOTHING;
 
 -- =========================================    
 -- ========== VARIANT SIZE STOCK MATRIX ==========
+-- =========================================    
+INSERT INTO variant_sizes (variant_id, size_id, stock_quantity, available)
+SELECT v.variant_id, s.size_id,
        CASE s.size_label
          WHEN '36' THEN 5
          WHEN '37' THEN 8
@@ -161,6 +170,7 @@ INSERT INTO payment_methods (method_name) VALUES
 ('Google Pay'),
 ('Gift Card'),
 ('Cash');
+
 
 
 -- =========================================

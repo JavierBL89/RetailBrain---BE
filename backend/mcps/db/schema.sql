@@ -9,26 +9,13 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- TABLE: products
 -- ============================================
 
-
--- ============================================
--- TABLE: providers
--- ============================================
-
-CREATE TABLE IF NOT EXISTS providers (
-    provider_id   SERIAL PRIMARY KEY,
-    name          VARCHAR(255) UNIQUE NOT NULL,
-    description   TEXT,
-    email         VARCHAR(255) UNIQUE NOT NULL,
-    created_at    TIMESTAMP DEFAULT NOW(),
-    updated_at    TIMESTAMP DEFAULT NOW()
-);
-
 CREATE TABLE IF NOT EXISTS products (
     product_id     SERIAL PRIMARY KEY,
     sku            VARCHAR(50) NOT NULL,
+    name           VARCHAR(250) NOT NULL,
     category       VARCHAR(100),
     brand          VARCHAR(50),
-    provider_id    INTEGER REFERENCES providers(provider_id),
+    gender       VARCHAR(25),
     created_at     TIMESTAMP DEFAULT NOW(),
     updated_at     TIMESTAMP DEFAULT NOW()
 );
@@ -69,13 +56,13 @@ CREATE TABLE IF NOT EXISTS product_variants (
     variant_id   SERIAL PRIMARY KEY,
     product_id   INTEGER NOT NULL REFERENCES products(product_id) ON DELETE CASCADE,
     variant_sku  VARCHAR(50) NOT NULL,
-    name         VARCHAR(100) NOT NULL,
+    name           VARCHAR(250) NOT NULL,
     description  VARCHAR(500) NOT NULL,
-    category     VARCHAR(50),
+    category       VARCHAR(100),
     color        VARCHAR(50),
     material     VARCHAR(50),
     gender       VARCHAR(25),
-    brand        VARCHAR(50),
+    brand          VARCHAR(50),
     price        NUMERIC(10,2) NOT NULL,
     image_url    TEXT,
     tags_string  TEXT,
