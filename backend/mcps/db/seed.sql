@@ -1,38 +1,48 @@
+-- =========================================    
+-- ========== PROVIDERS ==========
+-- =========================================    
+INSERT INTO providers (provider_id, name, description, email)
+VALUES
+    (1, 'Aldo', 'Leading global footwear and accessories brand.', 'contact@aldo.com'),
+    (2, 'Clarks', 'Renowned for quality and comfort in shoes.', 'info@clarks.com'),
+    (3, 'Zara', 'Fashion-forward retailer with a wide range of shoes and accessories.', 'support@zara.com')
+ON CONFLICT (provider_id) DO NOTHING;
+
 
 -- =========================================    
 -- ========== PRODUCTS ==========
 -- =========================================    
-INSERT INTO products (product_id, sku, category, brand)
+INSERT INTO products (product_id, sku, category, brand, provider_id)
 VALUES
-(9, 'MJWEDGE', 'Shoes', 'Aldo', 'Women'),
+(9, 'MJWEDGE', 'Shoes', 'Aldo', 1),
 
-(10, 'MJPATENT', 'Shoes', 'Aldo', 'Women'),
+(10, 'MJPATENT', 'Shoes', 'Aldo',  1),
 
-(11, 'PEEPSTUD','Shoes', 'Clarks', 'Women'),
+(11, 'PEEPSTUD','Shoes', 'Clarks', 2),
 
-(12, 'ANKLBOOT','Boot', 'Clarks', 'Women'),
+(12, 'ANKLBOOT','Boot', 'Clarks',2),
 
-(13, 'METSUEDE' ,'Shoes', 'Aldo', 'Women'),
+(13, 'METSUEDE' ,'Shoes', 'Aldo', 1),
 
-(14, 'PLATSANDL','Sandals', 'Aldo', 'Women'),
+(14, 'PLATSANDL','Sandals', 'Aldo', 1),
 
-(15, 'EMBPEEP','Shoes', 'Clarks', 'Women'),
+(15, 'EMBPEEP','Shoes', 'Clarks', 2),
 
-(16, 'MJWEDGE', 'Shoes', 'Clarks', 'Women'),
+(16, 'MJWEDGE', 'Shoes', 'Clarks', 2),
 
-(17, 'STUDCLR','Sandals', 'Aldo', 'Women'),
+(17, 'STUDCLR','Sandals', 'Aldo',1),
 
-(18, 'CLRWEDGE', 'Sandals', 'Zara', 'Women'),
+(18, 'CLRWEDGE', 'Sandals', 'Zara', 3),
 
-(19, 'COMF3-BEI', 'Sandals', 'Zara', 'Women'),
+(19, 'COMF3-BEI', 'Sandals', 'Zara', 3),
 
-(20, 'COMF3','Comfort Sandals', 'Aldo', 'Women'),
+(20, 'COMF3','Comfort Sandals', 'Aldo', 1),
 
-(21, 'HTBOOT','Boots', 'Zara', 'Women'),
+(21, 'HTBOOT','Boots', 'Zara', 3),
 
-(22, 'RIDING', 'Boots', 'Aldo', 'Women'),
+(22, 'RIDING', 'Boots', 'Aldo', 1),
 
-(23, 'RIDING', 'Boots', 'Aldo', 'Women')
+(23, 'RIDING', 'Boots', 'Aldo', 1)
 ON CONFLICT (product_id) DO NOTHING;
 
 -- =========================================    

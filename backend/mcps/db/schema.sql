@@ -5,6 +5,32 @@
 -- Enable extensions
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+
+-- ============================================
+-- TABLE: providers
+-- ============================================
+
+CREATE TABLE IF NOT EXISTS providers (
+    provider_id   SERIAL PRIMARY KEY,
+    name          VARCHAR(255) UNIQUE NOT NULL,
+    description   TEXT,
+    email         VARCHAR(255) UNIQUE NOT NULL,
+    created_at    TIMESTAMP DEFAULT NOW(),
+    updated_at    TIMESTAMP DEFAULT NOW()
+);
+
+-- =========================================    
+-- ========== PROVIDERS ==========
+-- =========================================    
+INSERT INTO providers (provider_id, name, description, email)
+VALUES
+    (1, 'Aldo', 'Leading global footwear and accessories brand.', 'contact@aldo.com'),
+    (2, 'Clarks', 'Renowned for quality and comfort in shoes.', 'info@clarks.com'),
+    (3, 'Zara', 'Fashion-forward retailer with a wide range of shoes and accessories.', 'support@zara.com')
+ON CONFLICT (provider_id) DO NOTHING;
+
+
+
 -- ============================================
 -- TABLE: products
 -- ============================================
@@ -12,10 +38,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS products (
     product_id     SERIAL PRIMARY KEY,
     sku            VARCHAR(50) NOT NULL,
-    name           VARCHAR(250) NOT NULL,
     category       VARCHAR(100),
     brand          VARCHAR(50),
-    gender       VARCHAR(25),
+    provider_id    INTEGER REFERENCES providers(provider_id),
     created_at     TIMESTAMP DEFAULT NOW(),
     updated_at     TIMESTAMP DEFAULT NOW()
 );
