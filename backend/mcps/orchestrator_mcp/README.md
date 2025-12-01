@@ -41,7 +41,7 @@ echo "Session ID: $SESSION"
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 418e95a421414e3a852dfbe97ac92ae6" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
   -H "X-Service-Token: MCP_SERVICE_TOKEN" \
   -d '{"jsonrpc":"2.0","method":"notifications/initialized","params":{}}'
 
@@ -54,7 +54,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 418e95a421414e3a852dfbe97ac92ae6" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -68,7 +68,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 418e95a421414e3a852dfbe97ac92ae6" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
   "jsonrpc": "2.0",
@@ -98,77 +98,13 @@ curl -X POST http://localhost:8000/mcp \
 }'
 
 
-## Call semantic_products_search
-curl -X POST http://localhost:8000/mcp \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 418e95a421414e3a852dfbe97ac92ae6" \
--H "X-Service-Token: kalandrakatech1234" \
-  -d '{                      
-    "jsonrpc": "2.0",                                      
-    "id": "1",
-    "method": "tools/call",
-    "params": {
-        "name": "route_request",
-        "arguments" :{
-            "conversation_id": "user123-abc",
-            "action": "semantic_products_search",
-            "user_query": {
-                "query": "can you help me to find a pair of sandals for my systers wedding day??, maybe around $75"
-            }
-        }
-    }
-  }'
-
-  curl -X POST http://localhost:8000/mcp \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 418e95a421414e3a852dfbe97ac92ae6" \
--H "X-Service-Token: kalandrakatech1234" \
-  -d '{                      
-    "jsonrpc": "2.0",                                      
-    "id": "1",
-    "method": "tools/call",
-    "params": {
-        "name": "route_request",
-        "arguments" :{
-            "conversation_id": "user123-abc",
-            "action": "semantic_products_search",
-            "user_query": {
-                "query": "mmm maybe a light color, such us beige or gold, rather comfortable, no high heel. Shandals probably"
-            }
-        }
-    }
-  }'
-
- curl -X POST http://localhost:8000/mcp \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 418e95a421414e3a852dfbe97ac92ae6" \
--H "X-Service-Token: kalandrakatech1234" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": "1",
-    "method": "tools/call",
-    "params": {
-        "name": "route_request",
-        "arguments" :{
-            "conversation_id": "user123-abc",
-            "action": "semantic_products_search",
-            "user_query": {
-                "query": "beige or gold"                                         
-            }
-        }
-    }
-  }'
-
 
 ## Call Insert product (MOCK DATA)
 
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 418e95a421414e3a852dfbe97ac92ae6" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -209,3 +145,244 @@ curl -X POST http://localhost:8000/mcp \
         }
     }
   }'
+
+
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "X-Service-Token: kalandrakatech1234" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+      "name": "route_request",
+      "arguments": {
+        "conversation_id": "user123-abc",
+        "action": "insert_product",
+        "product": {
+          "sku": "MEISABLACK",
+          "category": "Boot",
+          "brand": "Aldo",
+          "variants": [
+            {
+              "variant_sku": "MEISABLACK-BLK",
+              "name": "Meisa Abanico",
+              "description": "Make a bold statement with these knee-high lace-up boots featuring a sleek stiletto heel. The premium leather construction and full-length lacing provide a custom fit while delivering dramatic style.",
+              "category": "Boot",
+              "color": "Black",
+              "material": "Leather",
+              "gender": "Women",
+              "brand": "Aldo",
+              "price": 113.0,
+              "image_url": "MEISABLACK-BLK.jpg",
+              "tags_string": "black knee-high boots, stiletto heel, lace-up boots, leather boots, high heel boots, women''s boots, aldo, dress, event, evening wear, statement boots, tall boots",
+              "metadata": {
+                "occasion": "evening wear, special occasion, party, formal event",
+                "heel_type": "stiletto",
+                "heel_height": "high"
+              },
+              "sizes": [
+                { "size_label": "36", "stock_quantity": 1, "available": true },
+                { "size_label": "37", "stock_quantity": 2, "available": true },
+                { "size_label": "38", "stock_quantity": 3, "available": true },
+                { "size_label": "39", "stock_quantity": 4, "available": true },
+                { "size_label": "40", "stock_quantity": 3, "available": true },
+                { "size_label": "41", "stock_quantity": 2, "available": true }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  }'
+
+# Call fetch all products
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+-H "X-Service-Token: kalandrakatech1234" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+        "name": "route_request",
+        "arguments" :{
+            "conversation_id": "user123-abc",
+            "action": "fetch_products"
+    }}
+  }'
+
+# Call delete by variant sku
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+-H "X-Service-Token: kalandrakatech1234" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+        "name": "route_request",
+        "arguments" :{
+            "conversation_id": "user123-abc",
+            "action": "delete_variant_by_sku",
+            "user_query":{
+              "variant_skus":  ["MEISABLACK-BLK", "ABACOGNANT-BUR"]
+            }
+    }}
+  }'
+
+
+  # Call get_top_selling_products
+
+  curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "X-Service-Token: kalandrakatech1234" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+      "name": "route_request",
+      "arguments": {
+        "conversation_id": "user123-abc",
+        "action": "report",
+        "user_query": {
+          "report_type": "top_selling_products",
+          "date_from": "2025-05-01",
+          "date_to": "2025-11-30",
+          "limit": 10,
+          "group_by": "month",
+          "threshold": 1,
+          "product_id": null,
+          "filters": {
+          }
+        }
+      }
+    }
+  }'
+
+
+
+  # Call
+
+  curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "X-Service-Token: kalandrakatech1234" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+      "name": "route_request",
+      "arguments": {
+        "conversation_id": "user123-abc",
+        "action": "report",
+    "user_query": {
+      "report_type": "top_products_with_trends_over_time",
+      "date_from": "2025-07-01",
+      "date_to": "2025-09-30",
+      "limit": 5
+    }
+    }
+    }
+  }'
+
+
+
+
+
+curl -X POST http://localhost:8000/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "X-Service-Token: kalandrakatech1234" \
+  -d @- <<'EOF'
+{
+  "jsonrpc": "2.0",
+  "id": "1",
+  "method": "tools/call",
+  "params": {
+    "name": "route_request",
+    "arguments": {
+      "conversation_id": "user123-abc",
+      "action": "insert_product",
+      "products": [
+          {
+            "sku": "MEISABLACK",
+            "brand": "Aldo",
+            "category": "Boot",
+            "variants": [
+              {
+                "name": "Meisa Abanico",
+                "brand": "Aldo",
+                "color": "Black",
+                "price": 113.0,
+                "sizes": [
+                  { "available": true, "size_label": "36", "stock_quantity": 1 },
+                  { "available": true, "size_label": "37", "stock_quantity": 2 },
+                  { "available": true, "size_label": "38", "stock_quantity": 3 },
+                  { "available": true, "size_label": "39", "stock_quantity": 4 },
+                  { "available": true, "size_label": "40", "stock_quantity": 3 },
+                  { "available": true, "size_label": "41", "stock_quantity": 2 }
+                ],
+                "gender": "Women",
+                "material": "Leather",
+                "metadata": {
+                  "occasion": "evening wear, special occasion, party, formal event",
+                  "heel_type": "stiletto",
+                  "heel_height": "high"
+                },
+                "image_url": "MEISABLACK-BLK.jpg",
+                "description": "Make a bold statement with these knee-high lace-up boots featuring a sleek stiletto heel. The premium leather construction and full-length lacing provide a custom fit while delivering dramatic style.",
+                "tags_string": "black knee-high boots, stiletto heel, lace-up boots, leather boots, high heel boots, women's boots, aldo, dress, event, evening wear, statement boots, tall boots",
+                "variant_sku": "MEISABLACK-BLK"
+              }
+            ]
+          },
+          {
+            "sku": "ABACOGNANT",
+            "brand": "Granada Norte",
+            "category": "Boot",
+            "variants": [
+              {
+                "name": "Granada Norte",
+                "brand": "Granada Norte",
+                "color": "Burgundy",
+                "price": 99.0,
+                "sizes": [
+                  { "available": true, "size_label": "36", "stock_quantity": 2 },
+                  { "available": true, "size_label": "37", "stock_quantity": 4 },
+                  { "available": true, "size_label": "38", "stock_quantity": 6 },
+                  { "available": true, "size_label": "39", "stock_quantity": 8 },
+                  { "available": true, "size_label": "40", "stock_quantity": 6 },
+                  { "available": true, "size_label": "41", "stock_quantity": 4 }
+                ],
+                "gender": "Women",
+                "material": "Synthetic",
+                "metadata": {
+                  "occasion": "evening wear, special occasion, party, celebration",
+                  "heel_type": "stiletto",
+                  "heel_height": "high"
+                },
+                "image_url": "ABACOGNANT-BUR.jpg",
+                "description": "Step into luxury with these rich burgundy knee-high boots designed for maximum impact. The streamlined silhouette and stiletto heel create an elongated leg line perfect for special occasions.",
+                "tags_string": "burgundy boots, granate boots, knee-high boots, stiletto heel, synthetic boots, women's boots, red boots, evening wear, party, event, celebration, dress, tall boots",
+                "variant_sku": "ABACOGNANT-BUR"
+              }
+            ]
+          }
+        ]
+    }
+  }
+}
+EOF

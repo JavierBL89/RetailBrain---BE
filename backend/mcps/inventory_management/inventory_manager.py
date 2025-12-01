@@ -438,76 +438,97 @@ def delete_variants_by_sku_sql(delete_request: dict | list) -> dict:
     }
 
 
-def fetch_variants_by_variant_id_sql(product_ids):
-    """
-    Fetch product details from the SQL database based on a list of product product_ids.
-    """
-
-    # FIX: product_ids must be the inner list, not the outer wrapper
-    if isinstance(product_ids, list) and len(product_ids) == 1 and isinstance(product_ids[0], list):
-        product_ids = product_ids[0]
-
-    if not product_ids:
-        print("⚠ No product_ids passed to SQL fetch.")
+def fetch_variants_by_variant_id_sql(variant_ids):
+    if not variant_ids:
         return []
 
-    db_conn = get_db_connection()
+    # Normalize input
+    if isinstance(variant_ids, set):
+        variant_ids = list(variant_ids)
+        
+    # Guarantee variant_ids is a flat list of strings
+    if isinstance(variant_ids, str):
+        variant_ids = [variant_ids]
+    elif isinstance(variant_ids, list):
+        flat = []
+        for x in variant_ids:
+            if isinstance(x, list):
+                flat.extend(x)
+            else:
+                flat.append(x)
+        variant_ids = flat
+    else:
+        raise ValueError(f"variant_ids has invalid type: {type(variant_ids)}")
 
-    placeholders = ",".join(["%s"] * len(product_ids))
-    query = f"""
-        SELECT 
-            v.variant_id,
-            v.product_id,
-            v.variant_sku,
-            v.name,
-            v.description,
-            v.category,
-            v.color,
-            v.material,
-            v.gender,
-            v.brand,
-            v.price,
-            v.image_url,
-            v.tags_string
-        FROM product_variants v 
-        WHERE v.variant_id IN ({placeholders})
-    """
+    # Convert all to strings
+    variant_ids = [str(v) for v in variant_ids]
+    print("Variant Ids to be fetched", variant_ids)
+    
+    variants = []
 
-    with db_conn.cursor() as cur:
-        cur.execute(query, product_ids)
-        rows = cur.fetchall()
+    try:
+        db_conn = get_db_connection()
+        placeholders = ",".join(["%s"] * len(variant_ids))
 
-    db_conn.close()
-    products = {}
-    for r in rows:
-        pid = r[0]
+        query = f"""
+            SELECT 
+                v.variant_id,
+                v.product_id,
+                v.variant_sku,
+                v.name,
+                v.description,
+                v.category,
+                v.color,
+                v.material,
+                v.gender,
+                v.brand,
+                v.price,
+                v.image_url,
+                v.tags_string
+            FROM product_variants v
+            WHERE v.variant_id IN ({placeholders})
+        """
+        
+        with db_conn.cursor() as cur:
+            cur.execute(query, variant_ids)
+            rows = cur.fetchall()
 
-        if pid not in products:
-            products[pid] = {
-                "product_id": r[0],
-                "sku": r[1],
-                "name": r[2],
-                "description": r[3],
-                "category": r[4],
-                "material": r[5],
-                "gender": r[6],
-                "brand": r[7],
-                "tags_string": r[8],
-                "variants": []
+        db_conn.close()
+
+        for r in rows:
+            variant = {
+                "variant_id": r[0],
+                "product_id": r[1],
+                "variant_sku": r[2],
+                "name": r[3],
+                "description": r[4],
+                "category": r[5],
+                "color": r[6],
+                "material": r[7],
+                "gender": r[8],
+                "brand": r[9],
+                "price": float(r[10]) if r[10] is not None else None,
+                "image": r[11],
+                "tags_string": r[12]
             }
+            filename = variant["image"]
 
-        variant = {
-            "variant_id": r[9],
-            "variant_sku": r[10],
-            "color": r[11],
-            "price": float(r[12]) if r[12] else None,
-            "image_url": r[13]
-        }
+            # Ignore external URLs (like example.com)
+            if isinstance(filename, str) and not filename.startswith("http"):
+                variant["image_base64"] = encode_image_base64(filename)
+            else:
+                variant["image_base64"] = None
 
-        if r[9] is not None:
-            products[pid]["variants"].append(variant)
-
-    return list(products.values())
+            variants.append(variant)
+    except Exception as e:
+        print("Error occur whem mapping variant. Error", e)
+        return []
+    
+    # Create lookup table to preserve the original RANKING order
+    order_map = {vid: index for index, vid in enumerate(variant_ids)}
+    # Sort SQL variants by that order
+    variants = sorted(variants, key=lambda v: order_map.get(str(v["variant_id"]), 999))
+    return {"variants": variants}
 
 
 def fetch_all_product_variants():

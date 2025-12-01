@@ -14,32 +14,37 @@ load_dotenv()
 
 
 
-def query_gpt_api(context: list) -> str:
+def products_ranker(context: str, products: list) -> str:
     """
     Query the LLaMA API with the given context.
     """
 
-    if not context or not isinstance(context, list):
+    if not context or not isinstance(context, str):
         return "No context provided"
 
+    payload = {
+        "conversation": context,
+        "products": products
+    }
 
+    # Convert dict → JSON string (REQUIRED by OpenAI)
+    payload_str = json.dumps(payload, indent=2)
     try:
         # response = requests.post(API_URL, headers=headers, data=json.dumps(payload))
         # "version": "5" is good  "6"
         response= client.responses.create(
             prompt={
-                "id": "pmpt_691b370b69a8819488c4df0af9dfe6880f6df17c89108ed1",
-                "version": "16"
+                "id": "pmpt_6922137f457081978e933093c520d7e20d982757a38bc253",
+                "version": "2"
             },
             model="gpt-4o-mini",
             temperature=0.1,
             top_p=0.9,
-            input= context,
+            input= payload_str,
         )
-
+        print("Ranker response", response)
         if response is not None:
-            logging.info(f"Bot Response JSON: {response}")
-            
+            logging.info(f"Ranker Response JSON: {response}")
             result = response.output_text.strip()
             # Split chat output from structured JSON if present
             return trim_output_helper(result)

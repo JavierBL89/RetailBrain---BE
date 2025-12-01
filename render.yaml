@@ -3,8 +3,8 @@ services:
     name: orchestrator
     runtime: docker
     plan: starter
-    dockerfilePath: backend/mcps/orchestrator_mcp/Dockerfile
     rootDir: backend/mcps/orchestrator_mcp
+    dockerfilePath: Dockerfile
     envVars:
       - key: MCP_SERVICE_TOKEN
         sync: false  # lo defines manualmente o en el dashboard
