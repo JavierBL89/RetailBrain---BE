@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS providers (
     created_at    TIMESTAMP DEFAULT NOW(),
     updated_at    TIMESTAMP DEFAULT NOW()
 );
-
 -- =========================================    
 -- ========== PROVIDERS ==========
 -- =========================================    
@@ -28,7 +27,6 @@ VALUES
     (2, 'Clarks', 'Renowned for quality and comfort in shoes.', 'info@clarks.com'),
     (3, 'Zara', 'Fashion-forward retailer with a wide range of shoes and accessories.', 'support@zara.com')
 ON CONFLICT (provider_id) DO NOTHING;
-
 
 
 -- ============================================
@@ -167,4 +165,38 @@ CREATE TABLE cities (
 CREATE TABLE payment_methods (
     method_id SERIAL PRIMARY KEY,
     method_name TEXT NOT NULL UNIQUE
+);
+-- PROVIDERS
+SELECT setval(
+    'providers_provider_id_seq',
+    COALESCE((SELECT MAX(provider_id) FROM providers), 0) + 1,
+    true
+);
+
+-- PRODUCTS
+SELECT setval(
+    'products_product_id_seq',
+    COALESCE((SELECT MAX(product_id) FROM products), 0) + 1,
+    true
+);
+
+-- PRODUCT VARIANTS
+SELECT setval(
+    'product_variants_variant_id_seq',
+    COALESCE((SELECT MAX(variant_id) FROM product_variants), 0) + 1,
+    true
+);
+
+-- SIZES
+SELECT setval(
+    'sizes_size_id_seq',
+    COALESCE((SELECT MAX(size_id) FROM sizes), 0) + 1,
+    true
+);
+
+-- TAGS
+SELECT setval(
+    'tags_tag_id_seq',
+    COALESCE((SELECT MAX(tag_id) FROM tags), 0) + 1,
+    true
 );

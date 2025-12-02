@@ -178,7 +178,7 @@ docker exec -it db psql -U hackathon_user -d mydatabase -c "SELECT COUNT(*) FROM
 
 ## (WARNING) Rebuild database entirely -> seed.sql file  (this will remove any data and reenter data in seed.sql file)
 ```bash
-    - ./backend/mcps/db_analytics/db/schema.sql:/docker-entrypoint-initdb.d/00-schema.sql
+    - ./backend/mcps/db/schema.sql:/docker-entrypoint-initdb.d/00-schema.sql
     - ./backend/mcps/db_analytics/db/seed.sql:/docker-entrypoint-initdb.d/01-seed.sql
 ```
 

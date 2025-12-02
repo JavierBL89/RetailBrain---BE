@@ -1,5 +1,5 @@
-import sys, builtins, logging
-
+import sys, builtins
+import logging
 # silence stdout BEFORE anything else can run
 logging.basicConfig(stream=sys.stderr)
 _builtin_print = print
@@ -8,7 +8,6 @@ builtins.print = print
 
 from fastmcp import FastMCP
 import sys, os, builtins
-import logging
 import json
 from typing import Any
 
@@ -42,26 +41,26 @@ mcp = FastMCP("orchestrator")
 def inventory_management( 
     action: str, 
     arguments:str| None= None, 
-     user_query: Any | None = None,
+    user_query: Any | None = None,
     products: Any | None = None):
      
-
     if isinstance(products, str):
         products = json.loads(products)
 
     result = None  
 
-    if action == "insert_product":        # Insert new product into SQL database
-        #try:
-        new_variants_list = insert_new_product_sql(products or {})
-        #    variants_metadata = new_variants_list["variants_per_product"]
-        # except Exception as e:
-        #   return {"error": f"Failed to insert product into SQL db: {str(e)}"}
-        # print({"Products added to SQL with ids ": new_variants_list["SQL_inserted_product_ids"]})
-        # print({"Variants added to SQL with ids ": new_variants_list["SQL_inserted_product_variants_ids"]})
-        result = {"message": "Insert product not implemented"}
-        # result = {"Products added to SQL db ": upsert_products(variants_metadata or {})}  ## Product vector db insertion 
-    
+    if action == "insert_product": 
+        logger.info("inserting product")
+        try: # Insert new product into SQL database
+            new_variants_list = insert_new_product_sql(products or {})
+            variants_metadata = new_variants_list["variants_per_product"]
+        except Exception as e:
+            return {"error": f"Failed to insert product into SQL db: {str(e)}",
+                        "details": str(e)
+                    }
+        # Insert new product into Chromadb
+        result =  upsert_products(variants_metadata or {})  ## Product vector db insertion 
+
     elif action == "delete_variant_by_sku":
         try:
            result = inventory_manager(user_query or {}, action)

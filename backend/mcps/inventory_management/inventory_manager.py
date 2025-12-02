@@ -5,7 +5,6 @@ from pathlib import Path
 
 from mcps.db.init_db import get_db_connection
 
-
 def inventory_manager(user_query: list | dict = None, action: str = None) -> dict:
 
     if isinstance(user_query, str):
@@ -33,6 +32,8 @@ def inventory_manager(user_query: list | dict = None, action: str = None) -> dic
             "get_products_variants_with_images"
         ]
     }
+
+
 def insert_new_product_sql(products_data: dict | list ) -> list:
     """
     Accepts either:
@@ -42,13 +43,13 @@ def insert_new_product_sql(products_data: dict | list ) -> list:
     Returns:
         list of inserted product_ids
     """
-     
+
     # Normalize to list
     if isinstance(products_data, dict):
         products_data = [products_data]
     
     db_conn = get_db_connection()
-    
+
     # Define SQL queries needed
     product_query = """
         INSERT INTO products (sku, category, brand)
@@ -155,17 +156,20 @@ def insert_new_product_sql(products_data: dict | list ) -> list:
                             "occasion": meta.get("occasion")
                             }                       
                      
-                # push variant to list for return
-                variants_metadata_list.append(variant_metadata)
+                    # push variant to list for return
+                    variants_metadata_list.append(variant_metadata)
         db_conn.commit()
 
     except Exception as e:
         db_conn.rollback()
-        print("Error inserting product:", e)
-
+        error_msg = f"Error inserting product: {str(e)}"
+        raise Exception(error_msg)  # Re-raise so outer catch block can return it
+        
     finally:
         db_conn.close()
 
+    print({"Products added to SQL with ids ": inserter_product_ids})
+    print({"Variants added to SQL with ids ": inserted_variant_ids})
     return {
         "status": "success",
         "SQL_inserted_product_ids": inserter_product_ids,

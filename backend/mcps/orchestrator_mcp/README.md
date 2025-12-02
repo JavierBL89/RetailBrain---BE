@@ -41,7 +41,7 @@ echo "Session ID: $SESSION"
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
   -H "X-Service-Token: MCP_SERVICE_TOKEN" \
   -d '{"jsonrpc":"2.0","method":"notifications/initialized","params":{}}'
 
@@ -54,7 +54,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -68,7 +68,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
   "jsonrpc": "2.0",
@@ -104,7 +104,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -150,7 +150,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -202,7 +202,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
 -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -220,7 +220,7 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
 -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -243,7 +243,7 @@ curl -X POST http://localhost:8000/mcp \
   curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -276,7 +276,7 @@ curl -X POST http://localhost:8000/mcp \
   curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
   -H "X-Service-Token: kalandrakatech1234" \
   -d '{
     "jsonrpc": "2.0",
@@ -304,85 +304,84 @@ curl -X POST http://localhost:8000/mcp \
 curl -X POST http://localhost:8000/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -H "mcp-session-id: 0e18c31bc7c74eaaa2d4b45a539ebd87" \
+  -H "mcp-session-id: 45f7acecc55e48f1b32257e20a9007e6" \
   -H "X-Service-Token: kalandrakatech1234" \
-  -d @- <<'EOF'
-{
+  -d @- <<EOF
   "jsonrpc": "2.0",
   "id": "1",
   "method": "tools/call",
   "params": {
-    "name": "route_request",
-    "arguments": {
-      "conversation_id": "user123-abc",
-      "action": "insert_product",
-      "products": [
+      "name": "inventory_management",
+      "arguments": {
+        "action": "insert_product",
+        "products": [
           {
-            "sku": "MEISABLACK",
-            "brand": "Aldo",
-            "category": "Boot",
+            "sku": "TACTHIN",
+            "category": "Shoes",
+            "brand": "Zara",
+            "provider_id": 3,
             "variants": [
               {
-                "name": "Meisa Abanico",
-                "brand": "Aldo",
-                "color": "Black",
-                "price": 113.0,
-                "sizes": [
-                  { "available": true, "size_label": "36", "stock_quantity": 1 },
-                  { "available": true, "size_label": "37", "stock_quantity": 2 },
-                  { "available": true, "size_label": "38", "stock_quantity": 3 },
-                  { "available": true, "size_label": "39", "stock_quantity": 4 },
-                  { "available": true, "size_label": "40", "stock_quantity": 3 },
-                  { "available": true, "size_label": "41", "stock_quantity": 2 }
-                ],
+                "variant_sku": "TACTHIN-RED",
+                "name": "TH Heel Shoe",
+                "color": "Red",
+                "description": "Elevate any outfit with these timeless red pumps featuring a sleek pointed toe and confidence-boosting stiletto heel. Perfect for office presentations or dinner dates, the glossy synthetic leather offers durability and easy maintenance.",
+                "material": "Synthetic Leather",
                 "gender": "Women",
-                "material": "Leather",
+                "brand": "Zara",
+                "price": 43.80,
+                "image_url": "TACTHIN-RED.jpg",
+                "tags_string": "red heels, pointed toe pumps, stiletto heel, glossy finish, synthetic leather, classic pumps, formal wear, special occasion, evening wear, dress shoes, professional, business attire, elegant, women's heels, zara",
                 "metadata": {
-                  "occasion": "evening wear, special occasion, party, formal event",
                   "heel_type": "stiletto",
-                  "heel_height": "high"
+                  "heel_height": "high",
+                  "occasion": "formal wear, special occasion, evening wear, business attire, dress shoes"
                 },
-                "image_url": "MEISABLACK-BLK.jpg",
-                "description": "Make a bold statement with these knee-high lace-up boots featuring a sleek stiletto heel. The premium leather construction and full-length lacing provide a custom fit while delivering dramatic style.",
-                "tags_string": "black knee-high boots, stiletto heel, lace-up boots, leather boots, high heel boots, women's boots, aldo, dress, event, evening wear, statement boots, tall boots",
-                "variant_sku": "MEISABLACK-BLK"
+                "sizes": [
+                  { "size_label": "36", "stock_quantity": 1, "available": true },
+                  { "size_label": "37", "stock_quantity": 2, "available": true },
+                  { "size_label": "38", "stock_quantity": 3, "available": true },
+                  { "size_label": "39", "stock_quantity": 4, "available": true },
+                  { "size_label": "40", "stock_quantity": 3, "available": true },
+                  { "size_label": "41", "stock_quantity": 2, "available": true }
+                ]
               }
             ]
           },
           {
-            "sku": "ABACOGNANT",
-            "brand": "Granada Norte",
-            "category": "Boot",
+            "sku": "PLBESO",
+            "category": "Shoes",
+            "brand": "Zara",
+            "provider_id": 3,
             "variants": [
               {
-                "name": "Granada Norte",
-                "brand": "Granada Norte",
-                "color": "Burgundy",
-                "price": 99.0,
-                "sizes": [
-                  { "available": true, "size_label": "36", "stock_quantity": 2 },
-                  { "available": true, "size_label": "37", "stock_quantity": 4 },
-                  { "available": true, "size_label": "38", "stock_quantity": 6 },
-                  { "available": true, "size_label": "39", "stock_quantity": 8 },
-                  { "available": true, "size_label": "40", "stock_quantity": 6 },
-                  { "available": true, "size_label": "41", "stock_quantity": 4 }
-                ],
+                "variant_sku": "PLBESO-RED",
+                "name": "PB Wedge Shoe",
+                "color": "Red",
+                "description": "Walk with ease in these nude platform wedges that combine height with stability. The peep-toe design and neutral tone make them incredibly versatile for daytime events, brunch outings, or garden parties.",
+                "material": "Synthetic Leather",
                 "gender": "Women",
-                "material": "Synthetic",
+                "brand": "Zara",
+                "price": 45.70,
+                "image_url": "PLBESO-RED.jpg",
+                "tags_string": "nude wedges, platform wedge, beige heels, peep toe, synthetic leather, comfortable heels, casual wear, everyday style, daytime events, versatile, all-day wear, casual elegant, outdoor gatherings, women's wedges, zara",
                 "metadata": {
-                  "occasion": "evening wear, special occasion, party, celebration",
-                  "heel_type": "stiletto",
-                  "heel_height": "high"
+                  "heel_type": "wedge",
+                  "heel_height": "high",
+                  "occasion": "casual wear, everyday wear, daytime events, outdoor gatherings, special occasion"
                 },
-                "image_url": "ABACOGNANT-BUR.jpg",
-                "description": "Step into luxury with these rich burgundy knee-high boots designed for maximum impact. The streamlined silhouette and stiletto heel create an elongated leg line perfect for special occasions.",
-                "tags_string": "burgundy boots, granate boots, knee-high boots, stiletto heel, synthetic boots, women's boots, red boots, evening wear, party, event, celebration, dress, tall boots",
-                "variant_sku": "ABACOGNANT-BUR"
+                "sizes": [
+                  { "size_label": "36", "stock_quantity": 1, "available": true },
+                  { "size_label": "37", "stock_quantity": 2, "available": true },
+                  { "size_label": "38", "stock_quantity": 3, "available": true },
+                  { "size_label": "39", "stock_quantity": 4, "available": true },
+                  { "size_label": "40", "stock_quantity": 3, "available": true },
+                  { "size_label": "41", "stock_quantity": 2, "available": true }
+                ]
               }
             ]
           }
         ]
     }
   }
-}
 EOF
