@@ -140,20 +140,21 @@ ON CONFLICT (size_label) DO NOTHING;
 INSERT INTO variant_sizes (variant_id, size_id, stock_quantity, available)
 SELECT v.variant_id, s.size_id,
        CASE s.size_label
-         WHEN '36' THEN 5
-         WHEN '37' THEN 8
-         WHEN '38' THEN 5
-         WHEN '39' THEN 5
-         WHEN '40' THEN 8
-         WHEN '41' THEN 5
-       END,
-       TRUE
+         WHEN '36' THEN 2
+         WHEN '37' THEN 3
+         WHEN '38' THEN 4
+         WHEN '39' THEN 3
+         WHEN '40' THEN 2
+         WHEN '41' THEN 1
+       END AS stock_quantity,
+       TRUE AS available
 FROM product_variants v
 CROSS JOIN sizes s
 WHERE s.size_label IN ('36','37','38','39','40','41')
 ON CONFLICT (variant_id, size_id)
-DO UPDATE SET stock_quantity = EXCLUDED.stock_quantity,
-              available = EXCLUDED.available;
+DO UPDATE SET 
+    stock_quantity = EXCLUDED.stock_quantity,
+    available = EXCLUDED.available;
 
 
 -- =========================================    

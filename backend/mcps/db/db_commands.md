@@ -17,6 +17,29 @@
 
 
 
+## 📦 Product Catalog Reference
+
+### Available Products (Product IDs 9-23)
+
+1. **MJ Wedge Shoe** (ID: 9, 16) - Black & Brown variants
+2. **Mary Jane Patent Shoe** (ID: 10) - Black
+3. **Studded Peep Toe** (ID: 11) - Red/Brown/Gold
+4. **Ankle Boot** (ID: 12) - Black
+5. **Metallic Heel Shoe** (ID: 13) - Black
+6. **Platform Sandal** (ID: 14) - Orange
+7. **Embellished Peep Toe** (ID: 15) - Red
+8. **Stud Clear Shoe** (ID: 17) - Black
+9. **Clear Wedge Gold** (ID: 18) - Gold/Clear
+10. **Comfort 3 Shoe** (ID: 19, 20) - Beige & Black
+11. **High Top Boot** (ID: 21) - Brown
+12. **Riding Boot** (ID: 22, 23) - Black & Cognac
+
+### Price Range
+- **Budget**: $34.50 - $42.00 (Wedges, Comfort shoes)
+- **Mid-Range**: $59.00 - $99.00 (Most products)
+- **Premium**: $119.00 - $129.00 (Boots)
+
+
 ## 🔍 Essential Query Commands
 
 ### 1. **Quick Data Verification**
@@ -292,3 +315,70 @@ DELETE FROM variant_sizes
 WHERE variant_id = $1 AND size_id = $2
 RETURNING *;
 ```
+
+
+
+
+## 🛠️ Useful Management Commands
+
+### Connect to Database
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase
+```
+
+### List All Tables
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "\dt"
+```
+
+### Check products (should be 15)
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "SELECT COUNT(*) FROM products;"
+```
+
+### Check product_variants with auto-generated IDs (should be 15)
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "SELECT variant_id, product_id, variant_sku, color, price FROM product_variants ORDER BY variant_id;"
+```
+
+### Check sizes (should be 6)
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "SELECT * FROM sizes;"
+```
+
+### Check variant_sizes matrix (should be 90: 15 variants × 6 sizes)
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "SELECT COUNT(*) FROM variant_sizes;"
+```
+
+### Check sales table count
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "SELECT COUNT(*) FROM sales;"
+```
+
+## (WARNING) Rebuild database entirely -> seed.sql file  (this will remove any data and reenter data in seed.sql file)
+```bash
+    - ./backend/mcps/db/schema.sql:/docker-entrypoint-initdb.d/00-schema.sql
+    - ./backend/mcps/db_analytics/db/seed.sql:/docker-entrypoint-initdb.d/01-seed.sql
+```
+
+### View Table Schema
+```bash
+docker exec -it db psql -U hackathon_user -d mydatabase -c "\d products"
+docker exec -it db psql -U hackathon_user -d mydatabase -c "\d sales"
+```
+
+### Reset Containers 
+```bash
+docker compose down -v
+docker compose up --build
+```
+
+### Check Container Logs
+```bash
+docker logs db
+docker logs orchestrator
+```
+
+
+---

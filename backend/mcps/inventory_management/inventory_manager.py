@@ -6,32 +6,48 @@ from pathlib import Path
 from mcps.db.init_db import get_db_connection
 
 def inventory_manager(user_query: list | dict = None, action: str = None) -> dict:
+    """
+
+    """
+
+    if action == "describe":
+        return inv_mang_module_info()
 
     if isinstance(user_query, str):
         import json
         user_query =[user_query]
 
-    if action == "delete_variant_by_sku":
-        return delete_variants_by_sku_sql(user_query)
-    if action == "delete_product_by_id":
-        return delete_products_by_id_sql(user_query)
-    
+    match action:
+        case "delete_variant_by_sku":
+            return delete_variants_by_sku_sql(user_query)
+        case "delete_product_by_id":
+            return delete_products_by_id_sql(user_query)
+        case "get_low_stock_product_variants":
+            return get_low_stock_product_variants(user_query)
+        
 
+def inv_mang_module_info():
     """
-    Returns basic info about the inventory manager module.
+    Returns structured info about the inventory manager module.
+    Helps the LLM decide which action to call.
     """
-
     return {
         "module": "inventory_manager",
-        "description": "Module for managing product inventory in SQL database.",
-        "functions": [
-            "insert_new_product_sql",
-            "update_products_sql",
-            "delete_products_by_id_sql",
-            "fetch_products_by_product_id_sql",
-            "get_products_variants_with_images"
-        ]
+        "description": "SQL-backed inventory management: products, variants, stock, sizes.",
+        "actions": {
+            "insert_new_product_sql": "Insert one or more products with variants and sizes.",
+            "update_products_sql": "(NO AVAILABLE) Update product or variant information.",
+            "delete_products_by_id_sql": "(NO AVAILABLE) Delete products and cascade-remove variants + stocks.",
+            "delete_variant_by_sku": "(NO AVAILABLE) Delete one or more variants based on SKU.",
+            "fetch_products_by_product_id_sql": "(NO AVAILABLE)Fetch product + variant details by product_id.",
+            "fetch_variants_by_variant_id_sql": "Fetch one or more variants (with image).",
+            "fetch_all_product_variants": "Return all variants in database.",
+            "get_products_variants_with_images": "(NO AVAILABLE)Fetch variants + base64 images.",
+            "get_low_stock_product_variants": "Return variants where total stock < threshold.",
+            "describe": "List all available actions and module description."
+        }
     }
+
 
 
 def insert_new_product_sql(products_data: dict | list ) -> list:
@@ -404,6 +420,7 @@ def delete_products_by_id_sql(delete_request: dict) -> dict:
         "deleted_variant_sizes": deleted_variant_sizes
     }
 
+
 def delete_variants_by_sku_sql(delete_request: dict | list) -> dict:
     """
     Delete products and their variants based on provided SKUs.
@@ -590,6 +607,85 @@ def get_products_variants_with_images():
         products.append(product)
 
     return products
+
+
+def get_low_stock_product_variants(user_query: dict):
+    """
+    Returns a list of product variants where total stock (sum of all sizes)
+    is below the provided threshold.
+    """
+    threshold = user_query.get("stock_threshold")
+    
+    db_conn = get_db_connection()
+    try:
+        with db_conn.cursor() as cur:
+            # Step 1: Get list of low stock variant IDs
+            cur.execute("""
+                SELECT pv.variant_id
+                FROM product_variants pv
+                JOIN variant_sizes vs ON pv.variant_id = vs.variant_id
+                GROUP BY pv.variant_id
+                HAVING SUM(vs.stock_quantity) < %s
+            """, (threshold,))
+            
+            low_stock_ids = [row[0] for row in cur.fetchall()]
+            
+            if not low_stock_ids:
+                return {
+                    "status": "success",
+                    "variants": []
+                }
+            
+            # Step 2: Get detailed size breakdown
+            placeholders = ",".join(["%s"] * len(low_stock_ids))
+            cur.execute(f"""
+                SELECT 
+                    pv.variant_id,
+                    pv.variant_sku,
+                    pv.name AS variant_name,
+                    s.size_label,
+                    vs.stock_quantity
+                FROM product_variants pv
+                JOIN variant_sizes vs ON pv.variant_id = vs.variant_id
+                JOIN sizes s ON vs.size_id = s.size_id
+                WHERE pv.variant_id IN ({placeholders})
+                ORDER BY pv.variant_id, s.size_label;
+            """, low_stock_ids)
+            
+            rows = cur.fetchall()
+            
+            # Step 3: Organize results
+            variants = {}
+            for row in rows:
+                v_id = row[0]
+                if v_id not in variants:
+                    variants[v_id] = {
+                        "variant_id": row[0],
+                        "variant_sku": row[1],
+                        "variant_name": row[2],
+                        "size_breakdown": [],
+                        "total_stock": 0
+                    }
+                
+                variants[v_id]["size_breakdown"].append({
+                    "size_label": row[3],
+                    "stock_quantity": row[4]
+                })
+                
+                variants[v_id]["total_stock"] += row[4]
+            
+            return {
+                "status": "success",
+                "variants": list(variants.values()),
+                "total_variants": len(variants),
+                "grand_total_stock": sum(v["total_stock"] for v in variants.values())
+            }
+    
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    
+    finally:
+        db_conn.close()
 
 
 ###  Heper functions ###

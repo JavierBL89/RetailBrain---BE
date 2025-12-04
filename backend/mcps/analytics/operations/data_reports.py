@@ -280,7 +280,6 @@ def get_top_products_with_trends_over_time(user_query: dict):
         "trends": trends
     })
 
-
 def get_sales_over_time(user_query: dict):
     """
     Fetch sales over time data from the database.
@@ -317,7 +316,6 @@ def get_sales_over_time(user_query: dict):
     cursor.close()
     conn.close()
     return results
-
 
 
 

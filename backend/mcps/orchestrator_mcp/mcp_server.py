@@ -18,11 +18,11 @@ from mcps.product_v_search.main import process_search
 from mcps.product_v_search.main import upsert_products
 
 
-from mcps.inventory_management.inventory_manager import insert_new_product_sql, get_products_variants_with_images, inventory_manager, fetch_variants_by_variant_id_sql
+from mcps.inventory_management.inventory_manager import insert_new_product_sql, get_products_variants_with_images, inventory_manager, fetch_variants_by_variant_id_sql, get_low_stock_product_variants, inv_mang_module_info
 from mcps.analytics.data_reports_manager import data_reports_mgr
 
 from mcps.db.models.provider import Provider
-#from mcps.supplier_management.mail_providers import mail_providers as send_mail_providers
+#from mcps.supplier_management.mail_providers import send_email_providers
 #from mcps.supplier_management.get_providers import get_providers, get_provider_email
 
 logging.basicConfig(level=logging.INFO)
@@ -49,7 +49,11 @@ def inventory_management(
 
     result = None  
 
-    if action == "insert_product": 
+    if action == "inv_mang_module_info":
+            return inv_mang_module_info()
+    
+
+    elif action == "insert_product": 
         logger.info("inserting product")
         try: # Insert new product into SQL database
             new_variants_list = insert_new_product_sql(products or {})
@@ -61,23 +65,36 @@ def inventory_management(
         # Insert new product into Chromadb
         result =  upsert_products(variants_metadata or {})  ## Product vector db insertion 
 
+
     elif action == "delete_variant_by_sku":
         try:
            result = inventory_manager(user_query or {}, action)
         except Exception as e:
           return {"error": f"Failed to delete product variant: {str(e)}"} 
         
+
     elif action == "delete_product_by_id":
         try:
            result = inventory_manager(user_query or {})
         except Exception as e:
           return {"error": f"Failed to delete product: {str(e)}"} 
         
+
     elif action == "fetch_products":
         try:
             return get_products_variants_with_images()
         except Exception as e:
             return {"error": f"Failed to fetch products and variants: {str(e)}"}
+        
+
+    elif action == "get_low_stock_product_variants":
+        try:
+            return get_low_stock_product_variants(user_query or {})
+        
+        except Exception as e:
+            return {"error": f"Failed to fetch products and variants: {str(e)}"}
+
+
     else:
         return {"error": f"Unknown action: {action}"}
 
@@ -168,37 +185,43 @@ def create_analytics_dashboard(action: str, user_query: Any | None = None):
 
 
 @mcp.tool()
-def mail_providers_tool(user_query: Any | None = None):   
+def supplier_management(action: str |None = None, 
+                        user_query: Any | None = None):   
     """
     Contact providers via email.
     """
     if isinstance(user_query, str):
         user_query = json.loads(user_query)
 
+    result = None
 
+    if action == "get_providers_list":
+        result = get_all_providers()
+    
+    if action == "send_email_providers":
+        user_query = user_query or {}  # Ensure user_query is a dictionary
+        email_subject = (user_query or {}).get("subject", "No Subject")
+        email_body = (user_query or {}).get("body", "No Body")
+        to_emails = (user_query or {}).get("to_emails", [])
 
-    user_query = user_query or {}  # Ensure user_query is a dictionary
-    subject = (user_query or {}).get("subject", "No Subject")
-    body = (user_query or {}).get("body", "No Body")
-    to_emails = (user_query or {}).get("to_emails", [])
+        result = send_email_providers(email_subject, email_body, to_emails)
 
-    result = send_mail_providers(subject, body, to_emails)
     return {"result": result}
 
 
-@mcp.resource("providers://all")
-def get_all_providers():
-    """
-    Fetch all providers from the database.
-    """
-    return get_providers()
+# @mcp.resource("providers://all")
+# def get_all_providers():
+#     """
+#     Fetch all providers from the database.
+#     """
+#     return get_providers()
 
-@mcp.resource("provider_email://by_id/{provider_id}")
-def get_provider_mail_by_id(provider_id: int):
-    """
-    Fetch a provider email by provider ID.
-    """
-    return get_provider_email(provider_id)
+# @mcp.resource("provider_email://by_id/{provider_id}")
+# def get_provider_mail_by_id(provider_id: int):
+#     """
+#     Fetch a provider email by provider ID.
+#     """
+#     return get_provider_email(provider_id)
 
 
 # ------------------------------------------------------
@@ -297,10 +320,10 @@ if __name__ == "__main__":
     # Expose the MCP server as a Streamable HTTP endpoint
     
     #print("FastMCP Orchestrator started on port 8000")
-    mcp.run(transport="http", host="0.0.0.0", port=8000)
+    #mcp.run(transport="http", host="0.0.0.0", port=8000)
     
     #mcp.run(transport="http", host="127.0.0.1", port=8000) # Use this for local 
     
     ###### Use stdio transport for Claude Desktop ######
     #print("FastMCP Orchestrator started with stdio transport", file=sys.stderr)
-    #mcp.run(transport="stdio")
+    mcp.run(transport="stdio")
