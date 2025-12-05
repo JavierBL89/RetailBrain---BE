@@ -22,8 +22,8 @@ from mcps.inventory_management.inventory_manager import insert_new_product_sql, 
 from mcps.analytics.data_reports_manager import data_reports_mgr
 
 from mcps.db.models.provider import Provider
-#from mcps.supplier_management.mail_providers import send_email_providers
-#from mcps.supplier_management.get_providers import get_providers, get_provider_email
+from mcps.supplier_management.mail_providers import send_email_providers
+from mcps.supplier_management.get_providers import get_all_providers, get_provider_email, supplier_management_info
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -52,7 +52,6 @@ def inventory_management(
     if action == "inv_mang_module_info":
             return inv_mang_module_info()
     
-
     elif action == "insert_product": 
         logger.info("inserting product")
         try: # Insert new product into SQL database
@@ -190,6 +189,10 @@ def supplier_management(action: str |None = None,
     """
     Contact providers via email.
     """
+
+    if action=="describe":
+        return supplier_management_info()
+    
     if isinstance(user_query, str):
         user_query = json.loads(user_query)
 
@@ -197,35 +200,56 @@ def supplier_management(action: str |None = None,
 
     if action == "get_providers_list":
         result = get_all_providers()
+
+    if action == "get_provider_email":
+        pid = (user_query or {}).get("provider_id")
+        result = get_provider_email(pid)
     
     if action == "send_email_providers":
-        user_query = user_query or {}  # Ensure user_query is a dictionary
-        email_subject = (user_query or {}).get("subject", "No Subject")
-        email_body = (user_query or {}).get("body", "No Body")
-        to_emails = (user_query or {}).get("to_emails", [])
+        subject = (user_query or {}).get("subject", "No Subject")
+        body = (user_query or {}).get("body", "No Body")
+        to_email = (user_query or {}).get("to_emails", [])
 
-        result = send_email_providers(email_subject, email_body, to_emails)
+        result = send_email_providers(subject, body, to_email)
 
     return {"result": result}
 
 
-# @mcp.resource("providers://all")
-# def get_all_providers():
-#     """
-#     Fetch all providers from the database.
-#     """
-#     return get_providers()
+# ------------------------------------------------------
+#   PROMPTS DISPACHERS
+# ------------------------------------------------------
+@mcp.prompt()
+def supplier_management():
 
-# @mcp.resource("provider_email://by_id/{provider_id}")
-# def get_provider_mail_by_id(provider_id: int):
-#     """
-#     Fetch a provider email by provider ID.
-#     """
-#     return get_provider_email(provider_id)
+    name = "mail_providers_prompt.txt"
+    return load_prompt(name)
 
+@mcp.prompt()
+def inventory_management():
+    name = "inventory_management_prompt.txt"
+    return load_prompt(name)
+
+@mcp.prompt()
+def sales_analytics():
+    name = "sales_analytics_prompt.txt"
+    return load_prompt(name)
 
 # ------------------------------------------------------
+#   HELPER FUCNTIONS
+# ------------------------------------------------------
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROMPTS_DIR = os.path.normpath(os.path.join(BASE_DIR, "..", "..", "static", "prompts"))
+def load_prompt(name: str) -> str:
+    """ 
+    """
+    file_path = os.path.join(PROMPTS_DIR, name)
+    if not os.path.isfile(file_path):
+        return f"Prompt filepath'{PROMPTS_DIR}/{name}' not found."
+    return open(file_path).read()
+
+
+git commit -m "Add prompts dispatchers - Complete 'Supplier Management' module"
 chat_memory={} # Dict[str, List[Dict[str, str]]]
 
 def process_vector_search(conversation_id:str, user_query: dict):

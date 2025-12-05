@@ -21,21 +21,21 @@ def get_smtp_object():
     smtp_object.login(email, password)
     return smtp_object, email
 
-smtp_object, email = get_smtp_object()
+smtp_object, sender_email = get_smtp_object()
 
-def mail_providers(subject: str, body: str, to_emails: list[str]) -> str:
-    """
-    Send an email to a list of provider email addresses.
-    """
-    from_email = email
-    message = f'Subject: {subject}\n\n{body}'
 
+def send_email_providers(subject: str, body: str, to_emails: list[str]) -> dict:
+    """
+    Sends an email to a list of provider email addresses.
+    """
     try:
-        for to_email in to_emails:
-            smtp_object.sendmail(from_email, to_email, message)
-        return "Emails sent successfully."
+        for to in to_emails:
+            msg = f"Subject: {subject}\n\n{body}"
+            smtp_object.sendmail(sender_email, to, msg)
+        return {"status": "success", "message": "Emails sent successfully."}
     except Exception as e:
-        return f"Failed to send emails: {str(e)}"
+        return {"status": "error", "message": str(e)}
+
 
 
 
