@@ -19,7 +19,7 @@ from mcps.product_v_search.main import upsert_products
 
 
 from mcps.inventory_management.inventory_manager import insert_new_product_sql, get_products_variants_with_images, inventory_manager, fetch_variants_by_variant_id_sql, get_low_stock_product_variants, inv_mang_module_info
-from mcps.analytics.data_reports_manager import data_reports_mgr
+from mcps.analytics.data_reports_manager import data_reports_mgr, data_analytics_module_info
 
 from mcps.db.models.provider import Provider
 from mcps.supplier_management.mail_providers import send_email_providers
@@ -144,6 +144,9 @@ def analytics_operations(
     if isinstance(user_query, str):
         user_query = json.loads(user_query)
 
+    if action == "data_analytics_module_info":
+        return data_analytics_module_info()
+
     if action == "report":
         try:
             result = data_reports_mgr(user_query or {})
@@ -220,7 +223,6 @@ def supplier_management(action: str |None = None,
 # ------------------------------------------------------
 @mcp.prompt()
 def supplier_management():
-
     name = "mail_providers_prompt.txt"
     return load_prompt(name)
 
@@ -233,6 +235,16 @@ def inventory_management():
 def sales_analytics():
     name = "sales_analytics_prompt.txt"
     return load_prompt(name)
+
+
+# ------------------------------------------------------
+#   RESOURCE DISPACHERS
+# ------------------------------------------------------
+@mcp.resource("prompts://supplier-communication")
+async def suppliers_prompt():
+    name = "mail_providers_prompt.txt"
+    return load_prompt(name)
+
 
 # ------------------------------------------------------
 #   HELPER FUCNTIONS
@@ -249,7 +261,8 @@ def load_prompt(name: str) -> str:
     return open(file_path).read()
 
 
-git commit -m "Add prompts dispatchers - Complete 'Supplier Management' module"
+
+
 chat_memory={} # Dict[str, List[Dict[str, str]]]
 
 def process_vector_search(conversation_id:str, user_query: dict):
