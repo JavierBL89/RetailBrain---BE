@@ -166,37 +166,5 @@ CREATE TABLE payment_methods (
     method_id SERIAL PRIMARY KEY,
     method_name TEXT NOT NULL UNIQUE
 );
--- PROVIDERS
-SELECT setval(
-    'providers_provider_id_seq',
-    COALESCE((SELECT MAX(provider_id) FROM providers), 0) + 1,
-    true
-);
 
--- PRODUCTS
-SELECT setval(
-    'products_product_id_seq',
-    COALESCE((SELECT MAX(product_id) FROM products), 0) + 1,
-    true
-);
 
--- PRODUCT VARIANTS
-SELECT setval(
-    'product_variants_variant_id_seq',
-    COALESCE((SELECT MAX(variant_id) FROM product_variants), 0) + 1,
-    true
-);
-
--- SIZES
-SELECT setval(
-    'sizes_size_id_seq',
-    COALESCE((SELECT MAX(size_id) FROM sizes), 0) + 1,
-    true
-);
-
--- TAGS
-SELECT setval(
-    'tags_tag_id_seq',
-    COALESCE((SELECT MAX(tag_id) FROM tags), 0) + 1,
-    true
-);

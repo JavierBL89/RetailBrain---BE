@@ -315,7 +315,49 @@ def get_sales_over_time(user_query: dict):
     conn.close()
     return results
 
+def get_brand_performance_over_time(user_query: dict):
+    """
+    Fetch brand performance (units sold + revenue) over time.
+    Returns:
+        List of tuples (period, brand, units_sold, revenue)
+    """
 
+    group_by_expr = GROUP_BY_MAP.get(
+        user_query.get("group_by", "month"),
+        "TO_CHAR(s.sale_date, 'YYYY-MM')"
+    )
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        f"""
+        SELECT
+            {group_by_expr} AS period,
+            p.brand AS brand,
+            SUM(sli.quantity) AS units_sold,
+            SUM(sli.quantity * sli.unit_price) AS revenue
+        FROM sale_line_item sli
+        JOIN sales s ON s.sale_id = sli.sale_id
+        JOIN product_variants v ON v.variant_id = sli.variant_id
+        JOIN products p ON p.product_id = v.product_id
+        WHERE s.sale_date BETWEEN %(date_from)s AND %(date_to)s
+        GROUP BY period, p.brand
+        ORDER BY period, p.brand;
+        """,
+        {
+            "date_from": user_query.get("date_from"),
+            "date_to": user_query.get("date_to"),
+        }
+    )
+
+    results = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    return results
+
+    
 
 ##### empty function templates
 def get_size_mix():

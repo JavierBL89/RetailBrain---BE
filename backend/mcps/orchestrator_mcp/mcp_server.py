@@ -23,7 +23,7 @@ from mcps.analytics.data_reports_manager import data_reports_mgr, data_analytics
 
 from mcps.db.models.provider import Provider
 from mcps.supplier_management.mail_providers import send_email_providers
-from mcps.supplier_management.get_providers import get_all_providers, get_provider_email, supplier_management_info
+from mcps.supplier_management.suppliers_manager import get_all_providers, get_provider_email, supplier_management_info, update_provider_details
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,7 +49,7 @@ def inventory_management(
 
     result = None  
 
-    if action == "inv_mang_module_info":
+    if action == "describe":
             return inv_mang_module_info()
     
     elif action == "insert_product": 
@@ -79,7 +79,7 @@ def inventory_management(
           return {"error": f"Failed to delete product: {str(e)}"} 
         
 
-    elif action == "fetch_products":
+    elif action == "fetch_all_product_variants":
         try:
             return get_products_variants_with_images()
         except Exception as e:
@@ -144,7 +144,7 @@ def analytics_operations(
     if isinstance(user_query, str):
         user_query = json.loads(user_query)
 
-    if action == "data_analytics_module_info":
+    if action == "describe":
         return data_analytics_module_info()
 
     if action == "report":
@@ -201,12 +201,15 @@ def supplier_management(action: str |None = None,
 
     result = None
 
-    if action == "get_providers_list":
+    if action == "get_all_providers":
         result = get_all_providers()
 
     if action == "get_provider_email":
         pid = (user_query or {}).get("provider_id")
         result = get_provider_email(pid)
+
+    if action == "update_provider_details":
+        result = update_provider_details(user_query or {})
     
     if action == "send_email_providers":
         subject = (user_query or {}).get("subject", "No Subject")
@@ -221,18 +224,18 @@ def supplier_management(action: str |None = None,
 # ------------------------------------------------------
 #   PROMPTS DISPACHERS
 # ------------------------------------------------------
-@mcp.prompt()
-def supplier_management():
+@mcp.tool()
+def get_supplier_management_prompt():
     name = "mail_providers_prompt.txt"
     return load_prompt(name)
 
-@mcp.prompt()
-def inventory_management():
+@mcp.tool()
+def get_inventory_management_prompt():
     name = "inventory_management_prompt.txt"
     return load_prompt(name)
 
-@mcp.prompt()
-def sales_analytics():
+@mcp.tool()
+def get_data_analytics_prompt():
     name = "sales_analytics_prompt.txt"
     return load_prompt(name)
 
@@ -240,12 +243,25 @@ def sales_analytics():
 # ------------------------------------------------------
 #   RESOURCE DISPACHERS
 # ------------------------------------------------------
-@mcp.resource("prompts://supplier-communication")
+@mcp.resource("prompts://supplier-management")
 async def suppliers_prompt():
     name = "mail_providers_prompt.txt"
     return load_prompt(name)
 
+@mcp.resource("prompts://inventory-management")
+def inventory_management_prompt():
+    name = "inventory_management_prompt.txt"
+    return load_prompt(name)
 
+@mcp.resource("prompts://sales-analytics")
+def sales_analytics_prompt():
+    name = "sales_analytics_prompt.txt"
+    return load_prompt(name)
+
+@mcp.resource("prompts://multi_module")
+def multi_module_prompt():
+    name = "multi_module_prompt.txt"
+    return load_prompt(name)
 # ------------------------------------------------------
 #   HELPER FUCNTIONS
 # ------------------------------------------------------
@@ -356,11 +372,11 @@ def echo(message: str) -> str:
 if __name__ == "__main__":
     # Expose the MCP server as a Streamable HTTP endpoint
     
-    #print("FastMCP Orchestrator started on port 8000")
-    #mcp.run(transport="http", host="0.0.0.0", port=8000)
+    print("FastMCP Orchestrator started on port 8000")
+    mcp.run(transport="http", host="0.0.0.0", port=8000)
     
     #mcp.run(transport="http", host="127.0.0.1", port=8000) # Use this for local 
     
     ###### Use stdio transport for Claude Desktop ######
     #print("FastMCP Orchestrator started with stdio transport", file=sys.stderr)
-    mcp.run(transport="stdio")
+    #mcp.run(transport="stdio")

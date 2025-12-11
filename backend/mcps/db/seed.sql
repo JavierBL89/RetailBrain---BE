@@ -322,6 +322,76 @@ END $$;
 
 
 
+--- PROVIDERS
+SELECT setval(
+    'providers_provider_id_seq',
+    COALESCE((SELECT MAX(provider_id) FROM providers), 0) + 1,
+    true
+);
+
+-- PRODUCTS
+SELECT setval(
+    'products_product_id_seq',
+    COALESCE((SELECT MAX(product_id) FROM products), 0) + 1,
+    true
+);
+
+-- PRODUCT VARIANTS
+SELECT setval(
+    'product_variants_variant_id_seq',
+    COALESCE((SELECT MAX(variant_id) FROM product_variants), 0) + 1,
+    true
+);
+
+-- SIZES
+SELECT setval(
+    'sizes_size_id_seq',
+    COALESCE((SELECT MAX(size_id) FROM sizes), 0) + 1,
+    true
+);
+
+-- TAGS
+SELECT setval(
+    'tags_tag_id_seq',
+    COALESCE((SELECT MAX(tag_id) FROM tags), 0) + 1,
+    true
+);
+
+-- VARIANT METADATA
+SELECT setval(
+    'variant_metadata_metadata_id_seq',
+    COALESCE((SELECT MAX(metadata_id) FROM variant_metadata), 0) + 1,
+    true
+);
+
+-- SALES
+SELECT setval(
+    'sales_sale_id_seq',
+    COALESCE((SELECT MAX(sale_id) FROM sales), 0) + 1,
+    true
+);
+
+-- SALE LINE ITEMS
+SELECT setval(
+    'sale_line_item_line_item_id_seq',
+    COALESCE((SELECT MAX(line_item_id) FROM sale_line_item), 0) + 1,
+    true
+);
+
+-- CITIES
+SELECT setval(
+    'cities_id_seq',
+    COALESCE((SELECT MAX(id) FROM cities), 0) + 1,
+    true
+);
+
+-- PAYMENT METHODS
+SELECT setval(
+    'payment_methods_method_id_seq',
+    COALESCE((SELECT MAX(method_id) FROM payment_methods), 0) + 1,
+    true
+);
+
 -- =========================================
 -- VERIFICATION QUERIES
 -- =========================================

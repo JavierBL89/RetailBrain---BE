@@ -50,6 +50,11 @@ def inv_mang_module_info():
 
 
 
+
+# --------------------------
+# ---- FUNCTIONS
+# ---------------------------
+
 def insert_new_product_sql(products_data: dict | list ) -> list:
     """
     Accepts either:
@@ -688,7 +693,9 @@ def get_low_stock_product_variants(user_query: dict):
         db_conn.close()
 
 
+# --------------------------
 ###  Heper functions ###
+# ---------------------------
 import base64
 from pathlib import Path
 

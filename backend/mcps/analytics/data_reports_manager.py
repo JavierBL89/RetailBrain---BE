@@ -2,7 +2,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from mcps.analytics.operations.data_reports import get_top_selling_products, get_size_mix, get_revenue_qoq_comparison, get_variant_performance, get_aov_over_time, get_top_products_with_trends_over_time, get_revenue_over_time
+from mcps.analytics.operations.data_reports import get_top_selling_products, get_size_mix, get_revenue_qoq_comparison, get_variant_performance, get_aov_over_time, get_top_products_with_trends_over_time, get_revenue_over_time, get_brand_performance_over_time
 
 
 
@@ -32,6 +32,9 @@ def data_reports_mgr(operation_query: dict):
     elif operation_query["report_type"]  == "aov_over_time":
         return get_aov_over_time(operation_query)
     
+    elif operation_query["report_type"] == "brand_performance_over_time":
+        return get_brand_performance_over_time(operation_query)
+    
 
 
 def data_analytics_module_info():
@@ -49,7 +52,6 @@ def data_analytics_module_info():
             "sku", 
             "color", 
             "material",
-            "customer_city",
             "payment_method"
         ],
         "functions": [
@@ -105,14 +107,22 @@ def data_analytics_module_info():
                     "filters": "Optional filters"
                 }
             },
+            {
+                "name": "brand_performance_over_time",
+                "description": "Returns list of top seller brands",
+                "params": {
+                    "date_from": "Start date",
+                    "date_to": "End date",
+                }
+            },
             {"name": "get_size_mix", "description": "Returns size mix distribution (to be implemented)"},
             {"name": "get_variant_performance", "description": "Returns variant performance metrics (to be implemented)"},
             {"name": "get_aov_over_time", "description": "Returns average order value over time (to be implemented)"},
             {"name": "get_sales_data", "description": "Raw dump of the sales table"},
             {"name": "get_sales_line_items_data", "description": "Raw dump of sale_line_items"},
             {"name": "get_product_variants_data", "description": "Raw dump of product_variants"},
-            {"name": "get_cities_metadata", "description": "List of all city-level metadata"},
-            {"name": "get_payment_methods_data", "description": "List of payment methods"}
+            {"name": "get_payment_methods_data", "description": "List of payment methods"},
+            {"name": "brand_performance_over_time", "description": "See which brands are top sellers"}
         ]
     }
 
